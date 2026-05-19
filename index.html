@@ -468,7 +468,7 @@ async function pullResultsFromSB(){
     try{
       const d=JSON.parse(row.data||'{}');
       const k=row.race_id.toString();
-      if(d.placements&&JSON.stringify(RES[k])!==JSON.stringify(d)){RES[k]=d;changed=true;}
+      if(Array.isArray(d.placements)&&d.placements.length>0&&JSON.stringify(RES[k])!==JSON.stringify(d)){RES[k]=d;changed=true;}
       if(row.current_race)newCur=row.race_id;
     }catch(e){}
   });
@@ -512,7 +512,7 @@ function renderRaces(){
 
   RACES.forEach(race=>{
     const res=RES[race.id]||{};
-    const isDone=res.placements&&res.placements.length>0;
+    const isDone=Array.isArray(res.placements)&&res.placements.length>0;
     const isCur=curR===race.id;
     const div=document.createElement('div');
     div.className=`rc${isCur?' cur':''}${isDone?' done':''}`;
@@ -857,12 +857,19 @@ function saveRes(){
   pushResultsToSB();
 }
 
-function clearRes(){
+async function clearRes(){
   const id=parseInt(document.getElementById('arsel').value);if(!id)return;
   delete RES[id];
   if(curR===id){curR=null;}
-  // Delete from Supabase so it doesn't come back on next poll
-  sbFetch(`regatta_results?race_id=eq.${id}`,'DELETE');
+  // Delete from Supabase with correct headers
+  if(SB_URL&&SB_KEY){
+    try{
+      await fetch(`${SB_URL}/rest/v1/regatta_results?race_id=eq.${id}`,{
+        method:'DELETE',
+        headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'}
+      });
+    }catch(e){console.warn('SB delete error',e);}
+  }
   renderRaces();updateLiveBar();saveLocal();loadAdminRace();
   toast(`Cleared Race ${id}`);
 }
