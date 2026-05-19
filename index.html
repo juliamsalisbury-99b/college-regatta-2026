@@ -144,6 +144,7 @@ main{max-width:1060px;margin:0 auto;padding:20px 16px 60px}
 .union{background:rgba(30,27,75,.08);color:#1e1b4b;border-color:#6366f1}
 .stleos{background:rgba(159,18,57,.08);color:#881337;border-color:#f43f5e}
 .womens{background:rgba(219,39,119,.08);color:#831843;border-color:#ec4899}
+.intlhouse{background:rgba(14,116,144,.08);color:#164e63;border-color:#06b6d4}
 .empty{background:#f9fafb;color:#9ca3af;border-color:#e5e7eb}
 
 @media(max-width:600px){.lt{font-size:11px}.lt th,.lt td{padding:6px 7px}.hinfo{gap:12px}.ares-grid{grid-template-columns:22px 1fr 70px}}
@@ -306,7 +307,8 @@ const CL={
   duchesne:{name:'Duchesne',short:'DUC',cls:'duchesne',color:'#4a1d96'},
   union:{name:'Union',short:'UNI',cls:'union',color:'#1e1b4b'},
   stleos:{name:"St Leo's",short:'SLO',cls:'stleos',color:'#881337'},
-  womens:{name:"Women's Coll.",short:'WCL',cls:'womens',color:'#831843'},
+  womens:{name:"Women's College",short:'WCL',cls:'womens',color:'#831843'},
+  intlhouse:{name:'International House',short:'IH',cls:'intlhouse',color:'#0e7490'},
 };
 
 const DEFAULT_RACES=[
@@ -503,7 +505,6 @@ function renderRaces(){
     <div class="rbody">
       <table class="lt"><thead><tr><th>Lane</th><th>College</th><th>Result</th></tr></thead>
       <tbody>${rows}</tbody></table>
-      <div class="rnote">${race.note}</div>
     </div>`;
     box.appendChild(div);
   });
@@ -527,12 +528,54 @@ function filt(type,el){
 // ══════════════════════════════════════════
 // SCORES
 // ══════════════════════════════════════════
+// Points table: keyed by [gender][raceType][place]
+// Race types: 'eight', '1stfour', '2ndfour', '3rdfour', '4thfour', '5thfour'
+// Women's has a 9th place row
+const POINTS_TABLE={
+  mens:{
+    eight:    {1:28,2:26,3:24,4:22,5:20,6:18,7:16,8:14},
+    '1stfour':{1:26,2:24,3:22,4:20,5:18,6:16,7:14,8:12},
+    '2ndfour':{1:24,2:22,3:20,4:18,5:16,6:14,7:12,8:10},
+    '3rdfour':{1:22,2:20,3:18,4:16,5:14,6:12,7:10,8:8},
+    '4thfour':{1:20,2:18,3:16,4:14,5:12,6:10,7:8, 8:6},
+    '5thfour':{1:18,2:16,3:14,4:12,5:10,6:8, 7:6, 8:4},
+  },
+  womens:{
+    eight:    {1:28,2:26,3:24,4:22,5:20,6:18,7:16,8:14,9:12},
+    '1stfour':{1:26,2:24,3:22,4:20,5:18,6:16,7:14,8:12,9:10},
+    '2ndfour':{1:24,2:22,3:20,4:18,5:16,6:14,7:12,8:10,9:8},
+    '3rdfour':{1:22,2:20,3:18,4:16,5:14,6:12,7:10,8:8, 9:6},
+    '4thfour':{1:20,2:18,3:16,4:14,5:12,6:10,7:8, 8:6, 9:4},
+    '5thfour':{1:18,2:16,3:14,4:12,5:10,6:8, 7:6, 8:4, 9:2},
+  }
+};
+
+// Map a race to its scoring category
+function getRaceCategory(race){
+  const g=race.g==='womens'?'womens':'mens';
+  let type='5thfour';
+  const n=race.name.toLowerCase();
+  if(race.t==='eights')type='eight';
+  else if(n.includes('1st'))type='1stfour';
+  else if(n.includes('2nd'))type='2ndfour';
+  else if(n.includes('3rd'))type='3rdfour';
+  else if(n.includes('4th'))type='4thfour';
+  else if(n.includes('5th')||n.includes('6th')||n.includes('social'))type='5thfour';
+  return{g,type};
+}
+
+function getRacePoints(race,place){
+  const {g,type}=getRaceCategory(race);
+  return(POINTS_TABLE[g]?.[type]?.[place])||0;
+}
+
 function calcPts(){
   const pts={};Object.keys(CL).forEach(k=>pts[k]=0);
-  const pm={1:8,2:6,3:5,4:4,5:3,6:2,7:1,8:0};
   RACES.forEach(race=>{
     const res=RES[race.id];if(!res?.placements)return;
-    res.placements.forEach(p=>{if(pts[p.college]!==undefined)pts[p.college]+=(pm[p.place]||0);});
+    res.placements.forEach(p=>{
+      if(pts[p.college]!==undefined)pts[p.college]+=getRacePoints(race,p.place);
+    });
   });
   return Object.entries(pts).filter(([k])=>RACES.some(r=>r.lanes.includes(k))).sort((a,b)=>b[1]-a[1]);
 }
@@ -552,7 +595,6 @@ function renderScores(){
     document.getElementById('ptbl').innerHTML=`<div style="text-align:center;color:var(--muted);padding:24px;font-size:13px">No results yet — use Admin to enter them.</div>`;return;
   }
   const cols=sorted.map(([k])=>k);
-  const pm={1:8,2:6,3:5,4:4,5:3,6:2,7:1,8:0};
   let h=`<div style="overflow-x:auto"><table class="lt"><thead><tr><th>Race</th>${cols.map(k=>`<th style="min-width:54px">${CL[k]?.short}</th>`).join('')}</tr></thead><tbody>`;
   RACES.forEach(r=>{
     const res=RES[r.id];
@@ -561,7 +603,7 @@ function renderScores(){
       if(!res?.placements){h+=`<td style="text-align:center;color:var(--muted)">—</td>`;return;}
       const p=res.placements.find(pl=>pl.college===k);
       if(!p){h+=`<td style="text-align:center;color:var(--muted)">—</td>`;return;}
-      const v=pm[p.place]||0;
+      const v=getRacePoints(r,p.place);
       h+=`<td style="text-align:center;font-weight:600;color:${v>0?'var(--navy)':'var(--muted)'}">${v>0?v:'—'}</td>`;
     });h+=`</tr>`;
   });
@@ -592,7 +634,7 @@ function renderColleges(){
 }
 
 // ══════════════════════════════════════════
-// CREW LISTS
+// CREW LISTS — one card per college per race
 // ══════════════════════════════════════════
 function getPositions(race){
   return race.t==='eights'?EIGHT_POSITIONS:FOUR_POSITIONS;
@@ -601,40 +643,55 @@ function getPositions(race){
 function renderCrewLists(){
   const grid=document.getElementById('crewgrid');
   grid.innerHTML='';
+
   RACES.forEach(race=>{
-    const crew=CREWS[race.id]||{};
     const positions=getPositions(race);
     const al=activeLanes(race);
-    const collegeNames=[...new Set(al.map(x=>x.lbl||CL[x.c]?.name).filter(Boolean))].slice(0,2).join(' / ');
-    const boat=crew.boat||'';
-    let rows=positions.map(pos=>{
-      const name=crew[pos]||'';
-      return`<div class="crew-row">
-        <div class="crew-pos">${pos}</div>
-        <div class="crew-name${name?'':' placeholder'}">${name||'TBC'}</div>
+    // Get unique colleges in this race (by key, deduplicated)
+    const seen=new Set();
+    const colleges=[];
+    al.forEach(({c,lbl})=>{if(c&&!seen.has(c)){seen.add(c);colleges.push({c,lbl});}});
+
+    colleges.forEach(({c,lbl})=>{
+      const crewKey=`${race.id}_${c}`;
+      const crew=CREWS[crewKey]||{};
+      const collegeName=lbl||CL[c]?.name||c;
+      const boat=crew.boat||'';
+
+      let rows=positions.map(pos=>{
+        const name=crew[pos]||'';
+        return`<div class="crew-row">
+          <div class="crew-pos">${pos}</div>
+          <div class="crew-name${name?'':' placeholder'}">${name||'TBC'}</div>
+        </div>`;
+      }).join('');
+
+      const card=document.createElement('div');
+      card.className='crew-card';
+      card.innerHTML=`<div class="crew-hdr">
+        <div>
+          <div class="crew-hdr-t">Race ${race.id} — ${collegeName}</div>
+          <div class="crew-hdr-sub">${race.name} · ${race.time}${boat?' · '+boat:''}</div>
+        </div>
+        <button class="crew-edit-btn" onclick="openCrewEdit(${race.id},'${c}')">Edit crew</button>
+      </div>
+      <div class="crew-body">${rows}
+        ${boat?`<div style="margin-top:6px"><span class="boat-tag">Boat: ${boat}</span></div>`:''}
       </div>`;
-    }).join('');
-    const card=document.createElement('div');
-    card.className='crew-card';
-    card.innerHTML=`<div class="crew-hdr">
-      <div><div class="crew-hdr-t">Race ${race.id} — ${race.name}</div>
-      <div class="crew-hdr-sub">${race.time} · ${collegeNames}${boat?' · '+boat:''}</div></div>
-      <button class="crew-edit-btn" onclick="openCrewEdit(${race.id})">Edit crew</button>
-    </div>
-    <div class="crew-body">${rows}
-      ${boat?`<div><span class="boat-tag">🚣 ${boat}</span></div>`:''}
-    </div>`;
-    grid.appendChild(card);
+      grid.appendChild(card);
+    });
   });
 }
 
-function openCrewEdit(raceId){
+function openCrewEdit(raceId, collegeKey){
   const race=RACES.find(r=>r.id===raceId);if(!race)return;
-  editingCrewId=raceId;
-  const crew=CREWS[raceId]||{};
+  editingCrewId={raceId, collegeKey};
+  const crewKey=`${raceId}_${collegeKey}`;
+  const crew=CREWS[crewKey]||{};
   const positions=getPositions(race);
-  document.getElementById('crewModalTitle').textContent=`Race ${race.id} — ${race.name}`;
-  document.getElementById('crewModalSub').textContent=`${race.time} · ${race.dist}`;
+  const collegeName=CL[collegeKey]?.name||collegeKey;
+  document.getElementById('crewModalTitle').textContent=`Race ${race.id} — ${collegeName}`;
+  document.getElementById('crewModalSub').textContent=`${race.name} · ${race.time}`;
   document.getElementById('crew-boat').value=crew.boat||'';
   let html='';
   positions.forEach(pos=>{
@@ -648,14 +705,16 @@ function openCrewEdit(raceId){
 }
 
 function saveCrew(){
-  const race=RACES.find(r=>r.id===editingCrewId);if(!race)return;
+  const {raceId,collegeKey}=editingCrewId||{};
+  const race=RACES.find(r=>r.id===raceId);if(!race)return;
   const positions=getPositions(race);
+  const crewKey=`${raceId}_${collegeKey}`;
   const crew={boat:document.getElementById('crew-boat').value};
   positions.forEach(pos=>{
     const el=document.getElementById(`cf-${pos.replace(/\s/g,'_')}`);
     if(el)crew[pos]=el.value;
   });
-  CREWS[editingCrewId]=crew;
+  CREWS[crewKey]=crew;
   saveLocal();
   closeModal('crewModal');
   renderCrewLists();
@@ -666,14 +725,18 @@ function saveCrew(){
 // ADMIN — RESULTS
 // ══════════════════════════════════════════
 function openAdmin(){
-  // populate select
+  // populate race select
   const sel=document.getElementById('arsel');
   sel.innerHTML='<option value="">— pick a race —</option>'+RACES.map(r=>`<option value="${r.id}">${r.id}. ${r.name} (${r.time})</option>`).join('');
-  // populate settings
-  document.getElementById('set-title').value=document.querySelector('.htop h1')?.innerText||'';
-  document.getElementById('set-sub').value=document.getElementById('regattatitle')?.textContent||'';
-  document.getElementById('set-venue').value=document.getElementById('inf-venue')?.textContent||'';
-  document.getElementById('set-date').value=document.getElementById('inf-date')?.textContent||'';
+  // populate settings fields from saved values
+  try{
+    const s=localStorage.getItem('rg_settings');
+    const saved=s?JSON.parse(s):{};
+    document.getElementById('set-title').value=saved.title||document.querySelector('.htop h1')?.innerText||'';
+    document.getElementById('set-sub').value=saved.sub||document.getElementById('regattatitle')?.textContent||'';
+    document.getElementById('set-venue').value=saved.venue||document.getElementById('inf-venue')?.textContent||'';
+    document.getElementById('set-date').value=saved.date||document.getElementById('inf-date')?.textContent||'';
+  }catch(e){}
   // supabase
   document.getElementById('sb-url').value=SB_URL;
   document.getElementById('sb-key').value=SB_KEY;
@@ -800,16 +863,36 @@ function resetDraw(){
 // ADMIN — SETTINGS
 // ══════════════════════════════════════════
 function saveSettings(){
-  const title=document.getElementById('set-title').value;
-  const sub=document.getElementById('set-sub').value;
-  const venue=document.getElementById('set-venue').value;
-  const date=document.getElementById('set-date').value;
-  if(title)document.querySelector('.htop h1').innerHTML=title.replace('College','<span>College</span>');
+  const title=document.getElementById('set-title').value.trim();
+  const sub=document.getElementById('set-sub').value.trim();
+  const venue=document.getElementById('set-venue').value.trim();
+  const date=document.getElementById('set-date').value.trim();
+  if(title){
+    const h1=document.querySelector('.htop h1');
+    const words=title.split(' ');
+    // Bold last word in gold
+    const last=words.pop();
+    h1.innerHTML=words.join(' ')+' <span>'+last+'</span>';
+  }
   if(sub)document.getElementById('regattatitle').textContent=sub;
   if(venue)document.getElementById('inf-venue').textContent=venue;
   if(date)document.getElementById('inf-date').textContent=date;
   localStorage.setItem('rg_settings',JSON.stringify({title,sub,venue,date}));
   toast('Settings saved');
+}
+
+function applySettings(s){
+  if(!s)return;
+  const {title,sub,venue,date}=s;
+  if(title){
+    const h1=document.querySelector('.htop h1');
+    const words=title.split(' ');
+    const last=words.pop();
+    h1.innerHTML=words.join(' ')+' <span>'+last+'</span>';
+  }
+  if(sub)document.getElementById('regattatitle').textContent=sub;
+  if(venue)document.getElementById('inf-venue').textContent=venue;
+  if(date)document.getElementById('inf-date').textContent=date;
 }
 
 // ══════════════════════════════════════════
@@ -864,16 +947,10 @@ renderRaces();
 updateLiveBar();
 startPolling();
 
-// Load saved settings
+// Load saved settings on every page load
 try{
   const s=localStorage.getItem('rg_settings');
-  if(s){
-    const {title,sub,venue,date}=JSON.parse(s);
-    if(title)document.querySelector('.htop h1').innerHTML=title.replace('College','<span>College</span>');
-    if(sub)document.getElementById('regattatitle').textContent=sub;
-    if(venue)document.getElementById('inf-venue').textContent=venue;
-    if(date)document.getElementById('inf-date').textContent=date;
-  }
+  if(s)applySettings(JSON.parse(s));
 }catch(e){}
 </script>
 </body>
