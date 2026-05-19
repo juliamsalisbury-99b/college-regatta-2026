@@ -859,7 +859,10 @@ function saveRes(){
 
 function clearRes(){
   const id=parseInt(document.getElementById('arsel').value);if(!id)return;
-  delete RES[id];if(curR===id){curR=null;}
+  delete RES[id];
+  if(curR===id){curR=null;}
+  // Delete from Supabase so it doesn't come back on next poll
+  sbFetch(`regatta_results?race_id=eq.${id}`,'DELETE');
   renderRaces();updateLiveBar();saveLocal();loadAdminRace();
   toast(`Cleared Race ${id}`);
 }
