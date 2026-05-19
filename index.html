@@ -166,7 +166,7 @@ main{max-width:1060px;margin:0 auto;padding:20px 16px 60px}
   <div class="sbar">
     <span class="slbl"><span class="ldot" id="ldot"></span><span id="lstxt">Not live</span></span>
     <span class="currlbl" id="currlbl"></span>
-    <button class="abtn" onclick="openAdmin()">⚙ Admin</button>
+    <button class="abtn" id="adminBtn" onclick="openAdmin()" style="display:none">⚙ Admin</button>
   </div>
 </header>
 
@@ -197,10 +197,14 @@ main{max-width:1060px;margin:0 auto;padding:20px 16px 60px}
 
 <!-- SCORES -->
 <div class="panel" id="panel-scores">
-  <div class="sh"><h2>Overall standings</h2><div class="shln"></div></div>
-  <div class="lbgrid" id="lbgrid"></div>
-  <div class="sh"><h2>Points by race</h2><div class="shln"></div></div>
-  <div id="ptbl"></div>
+  <div class="sh"><h2>Men's standings</h2><div class="shln"></div></div>
+  <div class="lbgrid" id="lbgrid-mens"></div>
+  <div class="sh"><h2>Women's standings</h2><div class="shln"></div></div>
+  <div class="lbgrid" id="lbgrid-womens"></div>
+  <div class="sh"><h2>Points by race — Men's</h2><div class="shln"></div></div>
+  <div id="ptbl-mens"></div>
+  <div class="sh"><h2>Points by race — Women's</h2><div class="shln"></div></div>
+  <div id="ptbl-womens"></div>
 </div>
 
 <!-- COLLEGES -->
@@ -360,10 +364,26 @@ const FOUR_POSITIONS=['Cox','Stroke','3','2','Bow'];
 const EIGHT_POSITIONS=['Cox','Stroke','7','6','5','4','3','2','Bow'];
 
 // ══════════════════════════════════════════
+// ADMIN ACCESS — secret URL token
+// Share this URL for admin access:
+// https://juliamsalisbury-99b.github.io/college-regatta-2026/?admin=icc2026admin
+// Regular viewers use the URL without ?admin=...
+// Change the token below to anything you like
+// ══════════════════════════════════════════
+const ADMIN_TOKEN='icc2026admin';
+const isAdmin=(new URLSearchParams(window.location.search).get('admin')===ADMIN_TOKEN);
+
+// ══════════════════════════════════════════
+// SUPABASE — credentials baked in
+// ══════════════════════════════════════════
+const SB_URL_DEFAULT='https://zsvuthudnhcwmdsxwzgf.supabase.co';
+const SB_KEY_DEFAULT='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpzdnV0aHVkbmhjd21kc3h3emdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxNzg0OTUsImV4cCI6MjA5NDc1NDQ5NX0.PYr7h9Lgj_vTgTGow7mgZIyqdhcghcJgIbbkm57_Qok';
+
+// ══════════════════════════════════════════
 // STATE (loaded from localStorage)
 // ══════════════════════════════════════════
 let RACES=[], RES={}, CREWS={}, curR=null, isLive=false, editingCrewId=null;
-let SB_URL='', SB_KEY='';
+let SB_URL=SB_URL_DEFAULT, SB_KEY=SB_KEY_DEFAULT;
 let pollInterval=null;
 
 function loadState(){
@@ -376,8 +396,9 @@ function loadState(){
     CREWS=cr?JSON.parse(cr):{};
     const cur=localStorage.getItem('rg_cur');
     if(cur){curR=parseInt(cur);isLive=true;}
-    SB_URL=localStorage.getItem('rg_sb_url')||'';
-    SB_KEY=localStorage.getItem('rg_sb_key')||'';
+    // Allow override from localStorage if admin has changed them
+    SB_URL=localStorage.getItem('rg_sb_url')||SB_URL_DEFAULT;
+    SB_KEY=localStorage.getItem('rg_sb_key')||SB_KEY_DEFAULT;
   }catch(e){RACES=JSON.parse(JSON.stringify(DEFAULT_RACES));}
 }
 
@@ -393,11 +414,12 @@ function saveLocal(){
 // SUPABASE
 // ══════════════════════════════════════════
 function saveSBConfig(){
-  SB_URL=document.getElementById('sb-url').value.trim();
-  SB_KEY=document.getElementById('sb-key').value.trim();
+  SB_URL=document.getElementById('sb-url').value.trim()||SB_URL_DEFAULT;
+  SB_KEY=document.getElementById('sb-key').value.trim()||SB_KEY_DEFAULT;
   localStorage.setItem('rg_sb_url',SB_URL);
   localStorage.setItem('rg_sb_key',SB_KEY);
   updateSBStatus();
+  startPolling();
 }
 
 function updateSBStatus(){
@@ -413,43 +435,53 @@ async function sbFetch(path,method='GET',body=null){
     const opts={method,headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'}};
     if(body)opts.body=JSON.stringify(body);
     const r=await fetch(SB_URL+'/rest/v1/'+path,opts);
-    if(!r.ok)return null;
-    return await r.json();
-  }catch(e){return null;}
+    if(!r.ok){console.warn('SB error',r.status,await r.text());return null;}
+    const txt=await r.text();
+    return txt?JSON.parse(txt):[];
+  }catch(e){console.warn('SB fetch error',e);return null;}
 }
 
 async function pushResultsToSB(){
   if(!SB_URL||!SB_KEY)return;
-  const rows=Object.entries(RES).map(([id,v])=>({race_id:parseInt(id),data:JSON.stringify(v),current_race:curR===parseInt(id)}));
-  for(const row of rows){
-    await sbFetch(`regatta_results?race_id=eq.${row.race_id}`,'DELETE');
-    await sbFetch('regatta_results','POST',row);
+  const rows=Object.entries(RES).map(([id,v])=>({
+    race_id:parseInt(id),
+    data:JSON.stringify(v),
+    current_race:curR===parseInt(id)
+  }));
+  // Upsert all results in one call
+  if(rows.length){
+    await sbFetch('regatta_results?on_conflict=race_id','POST',rows);
   }
-  if(curR){
-    await sbFetch('regatta_results','DELETE');
-    for(const row of rows)await sbFetch('regatta_results','POST',row);
+  // Also upsert current race marker if set
+  if(curR&&!rows.find(r=>r.race_id===curR)){
+    await sbFetch('regatta_results?on_conflict=race_id','POST',[{race_id:curR,data:'{}',current_race:true}]);
   }
 }
 
 async function pullResultsFromSB(){
   if(!SB_URL||!SB_KEY)return;
   const data=await sbFetch('regatta_results?select=*');
-  if(!data||!data.length)return;
+  if(!data||!Array.isArray(data)||!data.length)return;
   let changed=false;
+  let newCur=null;
   data.forEach(row=>{
     try{
-      const d=JSON.parse(row.data);
+      const d=JSON.parse(row.data||'{}');
       const k=row.race_id.toString();
-      if(JSON.stringify(RES[k])!==JSON.stringify(d)){RES[k]=d;changed=true;}
-      if(row.current_race&&curR!==row.race_id){curR=row.race_id;isLive=true;changed=true;}
+      if(d.placements&&JSON.stringify(RES[k])!==JSON.stringify(d)){RES[k]=d;changed=true;}
+      if(row.current_race)newCur=row.race_id;
     }catch(e){}
   });
+  if(newCur&&newCur!==curR){curR=newCur;isLive=true;changed=true;}
   if(changed){saveLocal();renderRaces();updateLiveBar();}
 }
 
 function startPolling(){
   if(pollInterval)clearInterval(pollInterval);
-  if(SB_URL&&SB_KEY){pollInterval=setInterval(pullResultsFromSB,5000);pullResultsFromSB();}
+  if(SB_URL&&SB_KEY){
+    pullResultsFromSB();
+    pollInterval=setInterval(pullResultsFromSB,5000);
+  }
 }
 
 // ══════════════════════════════════════════
@@ -569,7 +601,23 @@ function getRacePoints(race,place){
   return(POINTS_TABLE[g]?.[type]?.[place])||0;
 }
 
+function calcPtsForGender(gender){
+  const pts={};Object.keys(CL).forEach(k=>pts[k]=0);
+  const gRaces=RACES.filter(r=>r.g===gender);
+  gRaces.forEach(race=>{
+    const res=RES[race.id];if(!res?.placements)return;
+    res.placements.forEach(p=>{
+      if(pts[p.college]!==undefined)pts[p.college]+=getRacePoints(race,p.place);
+    });
+  });
+  // Only include colleges that compete in this gender
+  return Object.entries(pts)
+    .filter(([k])=>gRaces.some(r=>r.lanes.includes(k)))
+    .sort((a,b)=>b[1]-a[1]);
+}
+
 function calcPts(){
+  // Combined — used by colleges tab
   const pts={};Object.keys(CL).forEach(k=>pts[k]=0);
   RACES.forEach(race=>{
     const res=RES[race.id];if(!res?.placements)return;
@@ -580,23 +628,29 @@ function calcPts(){
   return Object.entries(pts).filter(([k])=>RACES.some(r=>r.lanes.includes(k))).sort((a,b)=>b[1]-a[1]);
 }
 
-function renderScores(){
-  const sorted=calcPts();
+function renderLeaderboard(containerId, sorted){
   const rks=['rk1','rk2','rk3'];
-  document.getElementById('lbgrid').innerHTML=sorted.map(([k,pts],i)=>{
-    const c=CL[k];const rk=rks[i]||'rko';
-    return`<div class="lbc${i===0?' r1':''}">
-      <div class="rkcir ${rk}">${i+1}</div>
-      <div><div class="scn">${c.name}</div><div class="scp">${pts}</div><div class="scs">points</div></div>
-    </div>`;
-  }).join('');
+  document.getElementById(containerId).innerHTML=sorted.length
+    ? sorted.map(([k,pts],i)=>{
+        const c=CL[k];const rk=rks[i]||'rko';
+        return`<div class="lbc${i===0?' r1':''}">
+          <div class="rkcir ${rk}">${i+1}</div>
+          <div><div class="scn">${c.name}</div><div class="scp">${pts}</div><div class="scs">points</div></div>
+        </div>`;
+      }).join('')
+    : `<div style="color:var(--muted);font-size:13px;padding:8px 0">No results yet.</div>`;
+}
 
-  if(!Object.keys(RES).length){
-    document.getElementById('ptbl').innerHTML=`<div style="text-align:center;color:var(--muted);padding:24px;font-size:13px">No results yet — use Admin to enter them.</div>`;return;
+function renderPointsTable(containerId, gender){
+  const gRaces=RACES.filter(r=>r.g===gender);
+  const sorted=calcPtsForGender(gender);
+  const noResults=!gRaces.some(r=>RES[r.id]?.placements?.length);
+  if(noResults){
+    document.getElementById(containerId).innerHTML=`<div style="text-align:center;color:var(--muted);padding:16px;font-size:13px">No results yet.</div>`;return;
   }
   const cols=sorted.map(([k])=>k);
   let h=`<div style="overflow-x:auto"><table class="lt"><thead><tr><th>Race</th>${cols.map(k=>`<th style="min-width:54px">${CL[k]?.short}</th>`).join('')}</tr></thead><tbody>`;
-  RACES.forEach(r=>{
+  gRaces.forEach(r=>{
     const res=RES[r.id];
     h+=`<tr><td style="font-size:11px;font-weight:500;color:var(--navy);white-space:nowrap">${r.id}. ${r.name.replace("Women's","W").replace("Men's","M")}</td>`;
     cols.forEach(k=>{
@@ -610,7 +664,14 @@ function renderScores(){
   h+=`<tr style="border-top:2px solid var(--navy)"><td style="font-weight:600;font-size:12px;color:var(--navy)">Total</td>`;
   cols.forEach(k=>{const v=sorted.find(([kk])=>kk===k)?.[1]||0;h+=`<td style="text-align:center;font-weight:700;font-size:14px;color:var(--navy)">${v}</td>`;});
   h+=`</tr></tbody></table></div>`;
-  document.getElementById('ptbl').innerHTML=h;
+  document.getElementById(containerId).innerHTML=h;
+}
+
+function renderScores(){
+  renderLeaderboard('lbgrid-mens', calcPtsForGender('mens'));
+  renderLeaderboard('lbgrid-womens', calcPtsForGender('womens'));
+  renderPointsTable('ptbl-mens','mens');
+  renderPointsTable('ptbl-womens','womens');
 }
 
 // ══════════════════════════════════════════
@@ -946,6 +1007,9 @@ loadState();
 renderRaces();
 updateLiveBar();
 startPolling();
+
+// Show admin button only if secret token in URL
+if(isAdmin)document.getElementById('adminBtn').style.display='';
 
 // Load saved settings on every page load
 try{
