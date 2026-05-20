@@ -3,19 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 <title>2026 ICC Regatta</title>
+<script>
+const PAGE_VERSION='v14';
+const stored=sessionStorage.getItem('page_version');
+if(stored&&stored!==PAGE_VERSION){sessionStorage.setItem('page_version',PAGE_VERSION);window.location.reload(true);}
+else sessionStorage.setItem('page_version',PAGE_VERSION);
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0d1b2e;--navy2:#1a2f4a;--gold:#c8a84b;--gold2:#e8c96a;--water:#1a6fa3;--cream:#f8f4ed;--white:#fff;--text:#1a1a1a;--muted:#6b7280;--border:#e5e0d8;--green:#166534;--greenbg:#dcfce7;--red:#991b1b;--redbg:#fee2e2;--r:10px;--sh:0 2px 12px rgba(13,27,46,0.09)}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh}
 header{background:var(--navy);position:sticky;top:0;z-index:200;box-shadow:0 2px 20px rgba(0,0,0,0.3)}
-.htop{padding:18px 24px 14px;text-align:center;border-bottom:2px solid var(--gold)}
-.htop h1{font-family:'Playfair Display',serif;font-size:clamp(18px,5vw,38px);color:#fff;letter-spacing:.02em}
-.htop h1 span{color:var(--gold)}
+.htop{padding:14px 24px 12px;text-align:center;border-bottom:2px solid var(--gold);display:flex;align-items:center;justify-content:center;gap:16px}
+.htop-logo{width:52px;height:52px;flex-shrink:0}
+.htop-text h1{font-family:'Playfair Display',serif;font-size:clamp(18px,5vw,36px);color:#fff;letter-spacing:.02em;line-height:1.1}
+.htop-text h1 span{color:var(--gold)}
 .hsub{font-size:11px;color:rgba(255,255,255,.5);margin-top:3px;letter-spacing:.08em;text-transform:uppercase}
 .hnav{display:flex;justify-content:center;background:var(--navy2);overflow-x:auto;scrollbar-width:none}
 .hnav::-webkit-scrollbar{display:none}
@@ -61,10 +65,10 @@ main{max-width:1060px;margin:0 auto;padding:20px 16px 60px}
 .lt td{padding:7px 11px;border-bottom:1px solid var(--border);vertical-align:middle}
 .lt tr:last-child td{border-bottom:none}.lt tr:nth-child(even) td{background:rgba(13,27,46,.015)}
 .lnum{font-weight:700;color:var(--navy);width:32px}
-.cpill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600;border:1.5px solid}
+.cpill{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600;border:1.5px solid}
+.cpill-logo{width:14px;height:14px;flex-shrink:0}
 .plc{display:inline-flex;align-items:center;justify-content:center;width:21px;height:21px;border-radius:50%;font-size:11px;font-weight:700}
 .p1{background:#fbbf24;color:#78350f}.p2{background:#d1d5db;color:#374151}.p3{background:#b45309;color:#fff}.px{background:#f3f4f6;color:#6b7280}
-.rnote{background:rgba(26,111,163,.05);border-left:3px solid var(--water);padding:7px 11px;margin:0 14px 11px;border-radius:0 5px 5px 0;font-size:11px;color:#0c4a6e;line-height:1.5}
 .sh{display:flex;align-items:center;gap:10px;margin:20px 0 13px}
 .sh h2{font-family:'Playfair Display',serif;font-size:19px;color:var(--navy)}
 .shln{flex:1;height:1px;background:var(--border)}
@@ -74,13 +78,12 @@ main{max-width:1060px;margin:0 auto;padding:20px 16px 60px}
 .rkcir{width:33px;height:33px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
 .rk1{background:#fbbf24;color:#78350f}.rk2{background:#d1d5db;color:#374151}.rk3{background:#b45309;color:#fff}.rko{background:#f3f4f6;color:#6b7280}
 .scn{font-size:13px;font-weight:600;color:var(--navy)}.scp{font-family:'Playfair Display',serif;font-size:24px;color:var(--navy);line-height:1}.scs{font-size:10px;color:var(--muted)}
-.cgrd{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.cgrd{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
 .ccard{background:var(--white);border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--sh);padding:14px 16px}
-
-/* CREW LISTS */
+/* CREW */
 .crew-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
 .crew-card{background:var(--white);border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--sh);overflow:hidden}
-.crew-hdr{background:var(--navy);padding:11px 14px;display:flex;align-items:center;justify-content:space-between}
+.crew-hdr{padding:11px 14px;display:flex;align-items:center;justify-content:space-between}
 .crew-hdr-t{font-size:13px;font-weight:600;color:#fff}
 .crew-hdr-sub{font-size:11px;color:rgba(255,255,255,.5);margin-top:1px}
 .crew-edit-btn{padding:3px 10px;background:rgba(200,168,75,.18);border:1px solid rgba(200,168,75,.4);color:var(--gold2);border-radius:20px;font-size:10px;cursor:pointer;font-family:'DM Sans',sans-serif}
@@ -88,11 +91,8 @@ main{max-width:1060px;margin:0 auto;padding:20px 16px 60px}
 .crew-row{display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px}
 .crew-row:last-child{border-bottom:none}
 .crew-pos{font-weight:600;color:var(--navy);width:56px;flex-shrink:0;font-size:11px}
-.crew-name{flex:1;color:var(--text)}
-.crew-name.placeholder{color:var(--muted);font-style:italic}
-.crew-name input{width:100%;padding:3px 7px;border:1px solid var(--border);border-radius:5px;font-size:12px;font-family:'DM Sans',sans-serif;background:var(--cream)}
+.crew-name{flex:1;color:var(--text)}.crew-name.placeholder{color:var(--muted);font-style:italic}
 .boat-tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:500;background:rgba(26,111,163,.08);color:var(--water);border:1px solid rgba(26,111,163,.18);margin-top:6px}
-
 /* MODAL */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;overflow-y:auto;padding:30px 16px}
 .modal-bg.open{display:block}
@@ -112,53 +112,54 @@ main{max-width:1060px;margin:0 auto;padding:20px 16px 60px}
 .btn-gold{padding:7px 16px;background:var(--gold);color:var(--navy);border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif}
 .btn-red{padding:7px 16px;background:var(--redbg);color:var(--red);border:1px solid #fca5a5;border-radius:7px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif}
 .btn-outline{padding:7px 16px;background:none;color:var(--navy);border:1px solid var(--border);border-radius:7px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif}
-
-/* SUPABASE CONFIG NOTICE */
-.cfg-notice{background:rgba(200,168,75,.08);border:1px solid rgba(200,168,75,.35);border-radius:var(--r);padding:12px 16px;margin-bottom:16px;font-size:12px;color:#713f12;line-height:1.6;display:none}
-.cfg-notice strong{display:block;font-size:13px;margin-bottom:4px;color:var(--navy)}
-.cfg-notice code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:4px;font-family:monospace;font-size:11px}
-
-/* RESULTS ADMIN */
 .ares-grid{display:grid;grid-template-columns:28px 1fr 80px 90px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px}
 .ares-grid:last-child{border-bottom:none}
 .ares-grid.hdr{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding-bottom:6px}
 .psel{padding:4px 5px;border:1px solid var(--border);border-radius:5px;font-size:11px;font-family:'DM Sans',sans-serif;background:var(--white);width:100%}
 .tfield{padding:4px 7px;border:1px solid var(--border);border-radius:5px;font-size:11px;font-family:'DM Sans',sans-serif;width:100%;background:var(--white)}
-
-/* DRAW EDITOR */
 .draw-race{background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:10px}
 .draw-race-hdr{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
 .draw-race-hdr strong{font-size:13px;color:var(--navy)}
 .draw-lane-row{display:grid;grid-template-columns:40px 1fr 1fr;gap:6px;align-items:center;margin-bottom:6px;font-size:12px}
 .draw-lane-row span{font-weight:600;color:var(--muted);font-size:11px}
 .dinput{padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif;background:var(--white);width:100%}
-
-/* TOAST */
 .toast{position:fixed;bottom:20px;right:20px;background:var(--navy);color:#fff;padding:10px 16px;border-radius:9px;font-size:13px;font-weight:500;box-shadow:0 8px 24px rgba(0,0,0,.25);transform:translateY(60px);opacity:0;transition:all .3s;z-index:9999;border-left:3px solid var(--gold)}
 .toast.show{transform:translateY(0);opacity:1}
-
 /* COLLEGE PILLS */
-.emmanuel{background:rgba(30,64,175,.08);color:#1e3a8a;border-color:#3b82f6}
-.stjohns{background:rgba(15,118,110,.08);color:#134e4a;border-color:#14b8a6}
-.kings{background:rgba(161,98,7,.08);color:#713f12;border-color:#d97706}
-.grace{background:rgba(21,128,61,.08);color:#14532d;border-color:#22c55e}
-.cromwell{background:rgba(124,45,18,.08);color:#7c2d12;border-color:#f97316}
-.duchesne{background:rgba(107,33,168,.08);color:#4a1d96;border-color:#a855f7}
-.union{background:rgba(30,27,75,.08);color:#1e1b4b;border-color:#6366f1}
-.stleos{background:rgba(159,18,57,.08);color:#881337;border-color:#f43f5e}
-.womens{background:rgba(219,39,119,.08);color:#831843;border-color:#ec4899}
-.intlhouse{background:rgba(14,116,144,.08);color:#164e63;border-color:#06b6d4}
+.emmanuel{background:rgba(220,38,38,.08);color:#7f1d1d;border-color:#dc2626}
+.stjohns{background:rgba(161,98,7,.08);color:#713f12;border-color:#92400e}
+.kings{background:rgba(30,27,75,.08);color:#1e1b4b;border-color:#3730a3}
+.grace{background:rgba(107,33,168,.08);color:#4a1d96;border-color:#7c3aed}
+.cromwell{background:rgba(220,38,38,.08);color:#7f1d1d;border-color:#ef4444}
+.duchesne{background:rgba(37,99,235,.08);color:#1e3a8a;border-color:#2563eb}
+.union{background:rgba(220,38,38,.08);color:#7f1d1d;border-color:#f87171}
+.stleos{background:rgba(22,163,74,.08);color:#14532d;border-color:#16a34a}
+.womens{background:rgba(159,18,57,.08);color:#881337;border-color:#be123c}
+.intlhouse{background:rgba(202,138,4,.08);color:#713f12;border-color:#ca8a04}
 .empty{background:#f9fafb;color:#9ca3af;border-color:#e5e7eb}
-
 @media(max-width:600px){.lt{font-size:11px}.lt th,.lt td{padding:6px 7px}.hinfo{gap:12px}.ares-grid{grid-template-columns:22px 1fr 70px}}
 </style>
 </head>
 <body>
-
 <header>
   <div class="htop">
-    <h1>2026 <span>ICC Regatta</span></h1>
-    <div class="hsub" id="regattatitle">ICC Regatta · Sunday 24 May 2026</div>
+    <!-- UQBC Logo SVG -->
+    <svg class="htop-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" rx="8" fill="#1a2f4a"/>
+      <!-- Crossed oars -->
+      <line x1="20" y1="15" x2="80" y2="75" stroke="#c8a84b" stroke-width="5" stroke-linecap="round"/>
+      <line x1="80" y1="15" x2="20" y2="75" stroke="#c8a84b" stroke-width="5" stroke-linecap="round"/>
+      <!-- Shield -->
+      <path d="M50 30 L68 38 L68 58 Q68 72 50 80 Q32 72 32 58 L32 38 Z" fill="#0d1b2e" stroke="#c8a84b" stroke-width="2"/>
+      <!-- UQ book symbol simplified -->
+      <rect x="41" y="44" width="18" height="14" rx="1" fill="none" stroke="#c8a84b" stroke-width="1.5"/>
+      <line x1="50" y1="44" x2="50" y2="58" stroke="#c8a84b" stroke-width="1.5"/>
+      <text x="50" y="90" text-anchor="middle" font-size="7" fill="#c8a84b" font-family="sans-serif" font-weight="bold">UQBC</text>
+    </svg>
+    <div class="htop-text">
+      <h1>2026 <span>ICC Regatta</span></h1>
+      <div class="hsub" id="regattatitle">ICC Regatta · Sunday 24 May 2026</div>
+    </div>
   </div>
   <div class="hnav">
     <button class="nb on" onclick="showP('draw',this)">Race Draw</button>
@@ -174,17 +175,16 @@ main{max-width:1060px;margin:0 auto;padding:20px 16px 60px}
 </header>
 
 <main>
-<!-- DRAW -->
 <div class="panel on" id="panel-draw">
   <div class="hinfo">
     <div class="hi"><strong>Venue</strong><span id="inf-venue">King's College, St Lucia</span></div>
     <div class="hi"><strong>Date</strong><span id="inf-date">Sunday 24 May 2026</span></div>
     <div class="hi"><strong>First Race</strong><span id="inf-first">8:00 AM</span></div>
-    <div class="hi"><strong>Events</strong><span id="inf-events">13</span></div>
+    <div class="hi"><strong>Events</strong><span id="inf-events">14</span></div>
   </div>
   <div class="sgrid">
-    <div class="sc"><div class="sn" id="cnt-races">13</div><div class="sl2">Events</div></div>
-    <div class="sc"><div class="sn">9</div><div class="sl2">Colleges</div></div>
+    <div class="sc"><div class="sn" id="cnt-races">14</div><div class="sl2">Events</div></div>
+    <div class="sc"><div class="sn">10</div><div class="sl2">Colleges</div></div>
     <div class="sc"><div class="sn" id="cnt-done">0</div><div class="sl2">Completed</div></div>
     <div class="sc"><div class="sn">1500<span style="font-size:14px">m</span></div><div class="sl2">Max Dist</div></div>
   </div>
@@ -198,7 +198,6 @@ main{max-width:1060px;margin:0 auto;padding:20px 16px 60px}
   <div id="races"></div>
 </div>
 
-<!-- SCORES -->
 <div class="panel" id="panel-scores">
   <div class="sh"><h2>Men's standings</h2><div class="shln"></div></div>
   <div class="lbgrid" id="lbgrid-mens"></div>
@@ -210,21 +209,19 @@ main{max-width:1060px;margin:0 auto;padding:20px 16px 60px}
   <div id="ptbl-womens"></div>
 </div>
 
-<!-- COLLEGES -->
 <div class="panel" id="panel-colleges">
   <div class="sh"><h2>Competing colleges</h2><div class="shln"></div></div>
   <div class="cgrd" id="cgrd"></div>
 </div>
 
-<!-- CREW LISTS -->
 <div class="panel" id="panel-crew">
   <div class="sh"><h2>Crew lists</h2><div class="shln"></div></div>
-  <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Click "Edit crew" on any race card to add crew member names. Data saves automatically.</p>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:16px" id="crew-intro">Crew lists will be published here once confirmed.</p>
   <div class="crew-grid" id="crewgrid"></div>
 </div>
 </main>
 
-<!-- ═══ ADMIN MODAL ═══ -->
+<!-- ADMIN MODAL -->
 <div class="modal-bg" id="adminModal">
 <div class="modal">
   <div class="mhdr">
@@ -232,21 +229,18 @@ main{max-width:1060px;margin:0 auto;padding:20px 16px 60px}
     <button class="xbtn" onclick="closeModal('adminModal')">✕</button>
   </div>
   <div class="mbody">
-    <!-- Supabase config -->
     <div style="background:var(--cream);border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px">
-      <div style="font-weight:600;color:var(--navy);margin-bottom:8px;font-size:13px">🔗 Supabase connection <span id="sb-status" style="font-size:11px;color:var(--muted);font-weight:400">(not configured)</span></div>
+      <div style="font-weight:600;color:var(--navy);margin-bottom:8px;font-size:13px">🔗 Supabase <span id="sb-status" style="font-size:11px;color:var(--muted);font-weight:400"></span></div>
       <div class="mrow"><label>Project URL</label><input id="sb-url" placeholder="https://xxxx.supabase.co" oninput="saveSBConfig()"></div>
       <div class="mrow"><label>Anon Key</label><input id="sb-key" placeholder="eyJhbGci..." oninput="saveSBConfig()"></div>
-      <div style="font-size:11px;color:var(--muted);margin-top:4px">Paste your Supabase project URL and anon public key. Results will sync live to all viewers. <a href="https://supabase.com" target="_blank" style="color:var(--water)">supabase.com →</a></div>
     </div>
-    <div class="msep"></div>
-    <!-- Tabs inside admin -->
+    <div style="height:1px;background:var(--border);margin:14px 0"></div>
     <div style="display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:14px">
-      <button class="nb on" style="color:var(--navy);border-bottom-color:var(--navy);font-size:12px;padding:7px 14px" onclick="adminTab('results',this)">Enter Results</button>
+      <button class="nb on" style="color:var(--navy);border-bottom-color:var(--navy);font-size:12px;padding:7px 14px" onclick="adminTab('results',this)">Results</button>
       <button class="nb" style="color:var(--muted);font-size:12px;padding:7px 14px" onclick="adminTab('draw',this)">Edit Draw</button>
+      <button class="nb" style="color:var(--muted);font-size:12px;padding:7px 14px" onclick="adminTab('crew-admin',this)">Edit Crews</button>
       <button class="nb" style="color:var(--muted);font-size:12px;padding:7px 14px" onclick="adminTab('settings',this)">Settings</button>
     </div>
-    <!-- Results tab -->
     <div id="atab-results">
       <div class="mrow"><label>Select race</label>
         <select id="arsel" onchange="loadAdminRace()" style="flex:1;padding:6px 10px;border:1px solid var(--border);border-radius:7px;font-size:12px;font-family:'DM Sans',sans-serif">
@@ -260,40 +254,31 @@ main{max-width:1060px;margin:0 auto;padding:20px 16px 60px}
         <button class="btn-red" onclick="clearRes()">✕ Clear</button>
       </div>
     </div>
-    <!-- Draw editor tab -->
     <div id="atab-draw" style="display:none">
-      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Edit race times, names, distances and lane assignments. Changes are saved immediately and update the draw for all viewers.</p>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Edit race times, names, distances and lane assignments.</p>
       <div id="draweditor"></div>
       <div class="mfoot">
         <button class="btn-gold" onclick="saveDrawChanges()">💾 Save draw</button>
         <button class="btn-outline" onclick="resetDraw()">Reset to default</button>
       </div>
     </div>
-    <!-- Settings tab -->
-    <div id="atab-settings" style="display:none">
-      <div class="mrow"><label>Regatta title</label><input id="set-title" placeholder="2026 College Regatta"></div>
-      <div class="mrow"><label>Subtitle</label><input id="set-sub" placeholder="UQ Boat Club · Sunday 10 May 2026"></div>
-      <div class="mrow"><label>Venue</label><input id="set-venue" placeholder="UQ Boat Club, St Lucia"></div>
-      <div class="mrow"><label>Date</label><input id="set-date" placeholder="Sunday 10 May 2026"></div>
-      <div class="mfoot"><button class="btn-gold" onclick="saveSettings()">💾 Save settings</button></div>
+    <div id="atab-crew-admin" style="display:none">
+      <div class="mrow"><label>Select boat</label>
+        <select id="crewsel" onchange="loadCrewAdmin()" style="flex:1;padding:6px 10px;border:1px solid var(--border);border-radius:7px;font-size:12px;font-family:'DM Sans',sans-serif">
+          <option value="">— pick a race/college —</option>
+        </select>
+      </div>
+      <div id="crewadminform"></div>
+      <div class="mfoot" id="crewacts" style="display:none">
+        <button class="btn-gold" onclick="saveCrewAdmin()">💾 Save crew</button>
+      </div>
     </div>
-  </div>
-</div>
-</div>
-
-<!-- ═══ CREW EDIT MODAL ═══ -->
-<div class="modal-bg" id="crewModal">
-<div class="modal">
-  <div class="mhdr">
-    <div><div class="mhdr-t" id="crewModalTitle">Edit Crew</div><div class="mhdr-s" id="crewModalSub"></div></div>
-    <button class="xbtn" onclick="closeModal('crewModal')">✕</button>
-  </div>
-  <div class="mbody">
-    <div class="mrow"><label>Boat name</label><input id="crew-boat" placeholder="e.g. King's / Vespoli 663"></div>
-    <div class="msep"></div>
-    <div id="crewfields"></div>
-    <div class="mfoot">
-      <button class="btn-gold" onclick="saveCrew()">💾 Save crew</button>
+    <div id="atab-settings" style="display:none">
+      <div class="mrow"><label>Regatta title</label><input id="set-title" placeholder="2026 ICC Regatta"></div>
+      <div class="mrow"><label>Subtitle</label><input id="set-sub" placeholder="ICC Regatta · Sunday 24 May 2026"></div>
+      <div class="mrow"><label>Venue</label><input id="set-venue" placeholder="King's College, St Lucia"></div>
+      <div class="mrow"><label>Date</label><input id="set-date" placeholder="Sunday 24 May 2026"></div>
+      <div class="mfoot"><button class="btn-gold" onclick="saveSettings()">💾 Save settings</button></div>
     </div>
   </div>
 </div>
@@ -302,270 +287,68 @@ main{max-width:1060px;margin:0 auto;padding:20px 16px 60px}
 <div class="toast" id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════
-// DEFAULT DATA
-// ══════════════════════════════════════════
+// ══ COLLEGES ══
 const CL={
-  emmanuel:{name:'Emmanuel',short:'EMM',cls:'emmanuel',color:'#1e3a8a'},
-  stjohns:{name:"St John's",short:'SJC',cls:'stjohns',color:'#134e4a'},
-  kings:{name:"King's",short:'KNG',cls:'kings',color:'#713f12'},
-  grace:{name:'Grace',short:'GRC',cls:'grace',color:'#14532d'},
-  cromwell:{name:'Cromwell',short:'CRO',cls:'cromwell',color:'#7c2d12'},
-  duchesne:{name:'Duchesne',short:'DUC',cls:'duchesne',color:'#4a1d96'},
-  union:{name:'Union',short:'UNI',cls:'union',color:'#1e1b4b'},
-  stleos:{name:"St Leo's",short:'SLO',cls:'stleos',color:'#881337'},
-  womens:{name:"Women's College",short:'WCL',cls:'womens',color:'#831843'},
-  intlhouse:{name:'International House',short:'IH',cls:'intlhouse',color:'#0e7490'},
+  intlhouse:{name:'International House',short:'IH', cls:'intlhouse',color:'#ca8a04',
+    svg:'<svg viewBox="0 0 40 48" xmlns="http://www.w3.org/2000/svg"><path d="M20 2L38 10v20Q38 42 20 47Q2 42 2 30V10Z" fill="#1a1a1a" stroke="#ca8a04" stroke-width="2"/><rect x="14" y="20" width="12" height="16" fill="#ca8a04"/><rect x="18" y="26" width="4" height="10" fill="#1a1a1a"/><rect x="12" y="18" width="16" height="3" fill="#ca8a04"/></svg>'},
+  grace:{name:'Grace',short:'GRC',cls:'grace',color:'#7c3aed',
+    svg:'<svg viewBox="0 0 40 48" xmlns="http://www.w3.org/2000/svg"><path d="M20 2L38 10v20Q38 42 20 47Q2 42 2 30V10Z" fill="#4a1d96" stroke="#7c3aed" stroke-width="2"/><text x="20" y="32" text-anchor="middle" font-size="20" fill="#a78bfa" font-family="serif" font-weight="bold">G</text></svg>'},
+  union:{name:'Union',short:'UNI',cls:'union',color:'#dc2626',
+    svg:'<svg viewBox="0 0 40 48" xmlns="http://www.w3.org/2000/svg"><path d="M20 2L38 10v20Q38 42 20 47Q2 42 2 30V10Z" fill="#7f1d1d" stroke="#dc2626" stroke-width="2"/><text x="20" y="32" text-anchor="middle" font-size="14" fill="#fca5a5" font-family="serif" font-weight="bold">UC</text></svg>'},
+  emmanuel:{name:'Emmanuel',short:'EMM',cls:'emmanuel',color:'#dc2626',
+    svg:'<svg viewBox="0 0 40 48" xmlns="http://www.w3.org/2000/svg"><path d="M20 2L38 10v20Q38 42 20 47Q2 42 2 30V10Z" fill="#7f1d1d" stroke="#1d4ed8" stroke-width="2"/><line x1="10" y1="24" x2="30" y2="24" stroke="#fca5a5" stroke-width="3"/><line x1="20" y1="14" x2="20" y2="34" stroke="#93c5fd" stroke-width="3"/></svg>'},
+  duchesne:{name:'Duchesne',short:'DUC',cls:'duchesne',color:'#2563eb',
+    svg:'<svg viewBox="0 0 40 48" xmlns="http://www.w3.org/2000/svg"><path d="M20 2L38 10v20Q38 42 20 47Q2 42 2 30V10Z" fill="#1e3a8a" stroke="#2563eb" stroke-width="2"/><path d="M20 36 L13 24 L20 18 L27 24 Z" fill="none" stroke="#93c5fd" stroke-width="2"/><circle cx="20" cy="24" r="3" fill="#fbbf24"/></svg>'},
+  stjohns:{name:"St John's",short:'SJC',cls:'stjohns',color:'#92400e',
+    svg:'<svg viewBox="0 0 40 48" xmlns="http://www.w3.org/2000/svg"><path d="M20 2L38 10v20Q38 42 20 47Q2 42 2 30V10Z" fill="#78350f" stroke="#d97706" stroke-width="2"/><line x1="20" y1="12" x2="20" y2="36" stroke="#fde68a" stroke-width="3"/><line x1="10" y1="20" x2="30" y2="20" stroke="#fde68a" stroke-width="3"/></svg>'},
+  kings:{name:"King's",short:'KNG',cls:'kings',color:'#3730a3',
+    svg:'<svg viewBox="0 0 40 48" xmlns="http://www.w3.org/2000/svg"><path d="M20 2L38 10v20Q38 42 20 47Q2 42 2 30V10Z" fill="#1e1b4b" stroke="#4338ca" stroke-width="2"/><path d="M12 22 L20 14 L28 22" fill="none" stroke="#fbbf24" stroke-width="2"/><rect x="14" y="22" width="12" height="10" fill="#fbbf24" opacity="0.8"/></svg>'},
+  womens:{name:"Women's College",short:'WCL',cls:'womens',color:'#be123c',
+    svg:'<svg viewBox="0 0 40 48" xmlns="http://www.w3.org/2000/svg"><path d="M20 2L38 10v20Q38 42 20 47Q2 42 2 30V10Z" fill="#881337" stroke="#be123c" stroke-width="2"/><text x="20" y="32" text-anchor="middle" font-size="18" fill="#fda4af" font-family="serif" font-weight="bold">W</text></svg>'},
+  stleos:{name:"St Leo's",short:'SLO',cls:'stleos',color:'#16a34a',
+    svg:'<svg viewBox="0 0 40 48" xmlns="http://www.w3.org/2000/svg"><path d="M20 2L38 10v20Q38 42 20 47Q2 42 2 30V10Z" fill="#14532d" stroke="#16a34a" stroke-width="2"/><text x="20" y="33" text-anchor="middle" font-size="16" fill="#86efac" font-family="serif" font-weight="bold">SL</text></svg>'},
+  cromwell:{name:'Cromwell',short:'CRO',cls:'cromwell',color:'#ef4444',
+    svg:'<svg viewBox="0 0 40 48" xmlns="http://www.w3.org/2000/svg"><path d="M20 2L38 10v20Q38 42 20 47Q2 42 2 30V10Z" fill="#7f1d1d" stroke="#ef4444" stroke-width="2"/><line x1="8" y1="16" x2="32" y2="32" stroke="#fca5a5" stroke-width="3"/><line x1="8" y1="32" x2="32" y2="16" stroke="#fca5a5" stroke-width="2"/></svg>'},
 };
 
+// ══ RACE DATA (from 24 May 2026 schedule) ══
 const DEFAULT_RACES=[
   {id:1,time:'8:00 AM',name:"Women's 1st Four",dist:'1000m',g:'womens',t:'fours',
-   lanes:[null,'emmanuel','cromwell','grace',null,null,'union','duchesne'],
-   note:"Arrive 7:00am blades down. All boats depart UQBC. Marshals & Umpires in position 8:00am."},
+   lanes:['intlhouse','grace','union','emmanuel','duchesne','stjohns','kings','womens']},
   {id:2,time:'8:20 AM',name:"Men's 1st Four",dist:'1000m',g:'mens',t:'fours',
-   lanes:[null,'emmanuel','stjohns','stleos','kings',null,null,null],
-   note:"Arrive 7:00am. After Race 1, Women's 1st Fours to King's Pontoon for crew swap."},
+   lanes:['intlhouse','emmanuel','stleos','stjohns','kings',null,null,null]},
   {id:3,time:'8:40 AM',name:"Women's 2nd Four",dist:'1000m',g:'womens',t:'fours',
-   lanes:['stjohns','kings','grace','womens','emmanuel','cromwell','duchesne','union'],
-   note:"HOT BOAT at King's from Race 1. Women's 2nd Fours ready at King's Pontoon 8:10am."},
+   lanes:['emmanuel','union','grace','cromwell','duchesne','womens','stjohns','kings']},
   {id:4,time:'9:00 AM',name:"Men's 2nd Four",dist:'1000m',g:'mens',t:'fours',
-   lanes:['emmanuel','stleos','union','kings','stjohns','cromwell',null,null],
-   note:"HOT BOAT at King's from Race 2. Cromwell & Union 2nd IVs boat from UQBC."},
+   lanes:['union','intlhouse','emmanuel','stjohns','stleos','kings',null,null]},
   {id:5,time:'9:20 AM',name:"Women's 3rd Four",dist:'1000m',g:'womens',t:'fours',
-   lanes:['emmanuel','cromwell','union','stjohns','kings','womens','grace','duchesne'],
-   note:"HOT BOAT at King's from Race 3. Women's 3rd Fours ready 8:50am."},
+   lanes:['cromwell','grace','union','duchesne','emmanuel','womens','stjohns','kings']},
   {id:6,time:'9:40 AM',name:"Men's 3rd Four",dist:'1000m',g:'mens',t:'fours',
-   lanes:['kings','stleos','grace','emmanuel','cromwell','stjohns',null,null],
-   note:"HOT BOAT at King's from Race 4. Grace Men's 3rd IV boats from UQBC 9:00am."},
+   lanes:['cromwell','emmanuel','stleos','stjohns','grace','kings',null,null]},
   {id:7,time:'10:00 AM',name:"Women's 4th Four",dist:'750m',g:'womens',t:'fours',
-   lanes:['grace','kings','stjohns','womens','duchesne','emmanuel',null,null],
-   note:"Grace boating from UQBC 9:00am. HOT BOAT at King's from Race 5."},
+   lanes:['grace','emmanuel','womens','duchesne','kings','stjohns',null,null]},
   {id:8,time:'10:20 AM',name:"Men's 4th Four",dist:'750m',g:'mens',t:'fours',
-   lanes:['emmanuel','cromwell','kings','stleos','grace','stjohns',null,null],
-   note:"HOT BOAT at King's from Race 6. Cromwell return to UQBC post race."},
+   lanes:['cromwell','grace','emmanuel','stleos','stjohns','kings',null,null]},
   {id:9,time:'10:40 AM',name:"Women's 5th Four",dist:'750m',g:'womens',t:'fours',
-   lanes:['emmanuel','kings','womens','duchesne','grace','stjohns',null,null],
-   note:"HOT BOAT at King's from Race 7. Grace & Women's Coll. remain for hot boat."},
+   lanes:['grace','duchesne','emmanuel','womens','stjohns','kings',null,null]},
   {id:10,time:'11:00 AM',name:"Men's 5th Four",dist:'750m',g:'mens',t:'fours',
-   lanes:['kings','kings','stjohns','kings','emmanuel','stleos','grace','cromwell'],
-   lbls:["King's 7ths (Inv)","King's 6ths (Inv)","St John's","King's",'Emmanuel',"St Leo's",'Grace','Cromwell'],
-   note:"HOT BOAT at King's from Race 8. All boats return to UQBC after race."},
+   lanes:['grace','cromwell','emmanuel','stjohns','stleos','kings',null,null]},
   {id:11,time:'11:20 AM',name:"Women's 6th / Social Four",dist:'750m',g:'womens',t:'fours',
-   lanes:['kings','kings','grace','kings','grace',null,null,null],
-   lbls:["King's 8th","King's 7th","Grace 7th","King's 6th","Grace 6th",'','',''],
-   note:"Racing against stream. All crews return to UQBC after race."},
-  {id:12,time:'11:40 AM',name:"Men's Eight",dist:'1500m',g:'mens',t:'eights',
-   lanes:['grace','stleos','emmanuel','kings','cromwell','stjohns',null,null],
-   note:"Arrive 10:45am. Racing against stream. Men's crews on water 11:10am."},
-  {id:13,time:'12:00 PM',name:"Women's Eight",dist:'1500m',g:'womens',t:'eights',
-   lanes:['union','kings','grace','emmanuel','cromwell','stjohns','duchesne','womens'],
-   note:"Arrive 11:00am. Women's crews on water 11:30am. All boats return to UQBC."},
+   lanes:['emmanuel','kings','kings','grace','grace','kings',null,null],
+   lbls:['Emmanuel 6th',"King's 8th","King's 7th",'Grace 7th','Grace 6th',"King's 6th",null,null],
+   invitational:true},
+  {id:12,time:'11:40 AM',name:"Men's 6th / Social Four",dist:'750m',g:'mens',t:'fours',
+   lanes:['kings','stleos','emmanuel','kings',null,null,null,null],
+   lbls:["King's 7th","St Leo's 6th",'Emmanuel 6th',"King's 6th",null,null,null,null],
+   invitational:true},
+  {id:13,time:'12:00 PM',name:"Men's Eight",dist:'1500m',g:'mens',t:'eights',
+   lanes:['intlhouse','grace','emmanuel','stleos','stjohns','kings',null,null],
+   lbls:['Intl House (Mixed)','Grace','Emmanuel',"St Leo's","St John's","King's",'','']},
+  {id:14,time:'12:15 PM',name:"Women's Eight",dist:'1500m',g:'womens',t:'eights',
+   lanes:['union','cromwell','grace','emmanuel','stjohns','duchesne','womens','kings']},
 ];
 
-// CREW POSITIONS
-const FOUR_POSITIONS=['Cox','Stroke','3','2','Bow'];
-const EIGHT_POSITIONS=['Cox','Stroke','7','6','5','4','3','2','Bow'];
-
-// ══════════════════════════════════════════
-// ADMIN ACCESS — secret URL token
-// Share this URL for admin access:
-// https://juliamsalisbury-99b.github.io/college-regatta-2026/?admin=icc2026admin
-// Regular viewers use the URL without ?admin=...
-// Change the token below to anything you like
-// ══════════════════════════════════════════
-const ADMIN_TOKEN='icc2026admin';
-const isAdmin=(new URLSearchParams(window.location.search).get('admin')===ADMIN_TOKEN);
-
-// ══════════════════════════════════════════
-// SUPABASE — credentials baked in
-// ══════════════════════════════════════════
-const SB_URL_DEFAULT='https://zsvuthudnhcwmdsxwzgf.supabase.co';
-const SB_KEY_DEFAULT='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpzdnV0aHVkbmhjd21kc3h3emdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxNzg0OTUsImV4cCI6MjA5NDc1NDQ5NX0.PYr7h9Lgj_vTgTGow7mgZIyqdhcghcJgIbbkm57_Qok';
-
-// ══════════════════════════════════════════
-// STATE (loaded from localStorage)
-// ══════════════════════════════════════════
-let RACES=[], RES={}, CREWS={}, curR=null, isLive=false, editingCrewId=null;
-let SB_URL=SB_URL_DEFAULT, SB_KEY=SB_KEY_DEFAULT;
-let pollInterval=null;
-
-function loadState(){
-  try{
-    const r=localStorage.getItem('rg_races');
-    RACES=r?JSON.parse(r):JSON.parse(JSON.stringify(DEFAULT_RACES));
-    const res=localStorage.getItem('rg_results');
-    RES=res?JSON.parse(res):{};
-    const cr=localStorage.getItem('rg_crews');
-    CREWS=cr?JSON.parse(cr):{};
-    const cur=localStorage.getItem('rg_cur');
-    if(cur){curR=parseInt(cur);isLive=true;}
-    // Allow override from localStorage if admin has changed them
-    SB_URL=localStorage.getItem('rg_sb_url')||SB_URL_DEFAULT;
-    SB_KEY=localStorage.getItem('rg_sb_key')||SB_KEY_DEFAULT;
-  }catch(e){RACES=JSON.parse(JSON.stringify(DEFAULT_RACES));}
-}
-
-function saveLocal(){
-  localStorage.setItem('rg_races',JSON.stringify(RACES));
-  localStorage.setItem('rg_results',JSON.stringify(RES));
-  localStorage.setItem('rg_crews',JSON.stringify(CREWS));
-  if(curR)localStorage.setItem('rg_cur',curR);
-  else localStorage.removeItem('rg_cur');
-}
-
-// ══════════════════════════════════════════
-// SUPABASE
-// ══════════════════════════════════════════
-function saveSBConfig(){
-  SB_URL=document.getElementById('sb-url').value.trim()||SB_URL_DEFAULT;
-  SB_KEY=document.getElementById('sb-key').value.trim()||SB_KEY_DEFAULT;
-  localStorage.setItem('rg_sb_url',SB_URL);
-  localStorage.setItem('rg_sb_key',SB_KEY);
-  updateSBStatus();
-  startPolling();
-}
-
-function updateSBStatus(){
-  const el=document.getElementById('sb-status');
-  if(!el)return;
-  if(SB_URL&&SB_KEY){el.textContent='✓ configured';el.style.color='#16a34a';}
-  else{el.textContent='(not configured)';el.style.color='var(--muted)';}
-}
-
-async function sbFetch(path,method='GET',body=null){
-  if(!SB_URL||!SB_KEY)return null;
-  try{
-    const opts={method,headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'}};
-    if(body)opts.body=JSON.stringify(body);
-    const r=await fetch(SB_URL+'/rest/v1/'+path,opts);
-    if(!r.ok){console.warn('SB error',r.status,await r.text());return null;}
-    const txt=await r.text();
-    return txt?JSON.parse(txt):[];
-  }catch(e){console.warn('SB fetch error',e);return null;}
-}
-
-async function pushResultsToSB(){
-  if(!SB_URL||!SB_KEY)return;
-  const rows=Object.entries(RES).map(([id,v])=>({
-    race_id:parseInt(id),
-    data:JSON.stringify(v),
-    current_race:curR===parseInt(id)
-  }));
-  // Upsert all results in one call
-  if(rows.length){
-    await sbFetch('regatta_results?on_conflict=race_id','POST',rows);
-  }
-  // Also upsert current race marker if set
-  if(curR&&!rows.find(r=>r.race_id===curR)){
-    await sbFetch('regatta_results?on_conflict=race_id','POST',[{race_id:curR,data:'{}',current_race:true}]);
-  }
-}
-
-async function pullResultsFromSB(){
-  if(!SB_URL||!SB_KEY)return;
-  const data=await sbFetch('regatta_results?select=*');
-  if(!data||!Array.isArray(data)||!data.length)return;
-  let changed=false;
-  let newCur=null;
-  data.forEach(row=>{
-    try{
-      const d=JSON.parse(row.data||'{}');
-      const k=row.race_id.toString();
-      if(Array.isArray(d.placements)&&d.placements.length>0&&JSON.stringify(RES[k])!==JSON.stringify(d)){RES[k]=d;changed=true;}
-      if(row.current_race)newCur=row.race_id;
-    }catch(e){}
-  });
-  if(newCur&&newCur!==curR){curR=newCur;isLive=true;changed=true;}
-  if(changed){saveLocal();renderRaces();updateLiveBar();}
-}
-
-function startPolling(){
-  if(pollInterval)clearInterval(pollInterval);
-  if(SB_URL&&SB_KEY){
-    pullResultsFromSB();
-    pollInterval=setInterval(pullResultsFromSB,5000);
-  }
-}
-
-// ══════════════════════════════════════════
-// RENDER HELPERS
-// ══════════════════════════════════════════
-function pill(k,lbl){
-  if(!k)return'<span class="cpill empty">—</span>';
-  const c=CL[k]||{};
-  return`<span class="cpill ${c.cls||''}">${lbl||c.name||k}</span>`;
-}
-
-function activeLanes(race){
-  return race.lanes.map((c,i)=>({
-    lane:i+1,c,
-    lbl:(race.lbls&&race.lbls[i])||(c?(CL[c]?.name||c):null)
-  })).filter(x=>x.c);
-}
-
-// ══════════════════════════════════════════
-// RENDER RACES
-// ══════════════════════════════════════════
-function renderRaces(){
-  const box=document.getElementById('races');
-  box.innerHTML='';
-  document.getElementById('cnt-races').textContent=RACES.length;
-  const done=Object.keys(RES).filter(k=>RES[k]?.placements?.length>0).length;
-  document.getElementById('cnt-done').textContent=done;
-
-  RACES.forEach(race=>{
-    const res=RES[race.id]||{};
-    const isDone=Array.isArray(res.placements)&&res.placements.length>0;
-    const isCur=curR===race.id;
-    const div=document.createElement('div');
-    div.className=`rc${isCur?' cur':''}${isDone?' done':''}`;
-    div.dataset.g=race.g;div.dataset.t=race.t;div.id=`rc${race.id}`;
-
-    const bdg=isDone?`<span class="rbdg bdn">✓ Done</span>`:isCur?`<span class="rbdg bcur">▶ Racing</span>`:`<span class="rbdg bup">Upcoming</span>`;
-    const al=activeLanes(race);
-    let rows='';
-    al.forEach(({lane,c,lbl})=>{
-      const p=res.placements?.find(x=>x.lane===lane);
-      const tm=res.times?.[lane]||'';
-      rows+=`<tr>
-        <td class="lnum">${lane}</td>
-        <td>${pill(c,lbl)}</td>
-        <td>${p?`<span class="plc ${p.place<=3?'p'+p.place:'px'}">${p.place}</span>`:''}${tm?`<span style="font-size:11px;color:var(--muted);margin-left:4px">${tm}</span>`:''}</td>
-      </tr>`;
-    });
-    div.innerHTML=`<div class="rh" onclick="tog(${race.id})">
-      <div class="rnum">${race.id}</div>
-      <div class="rtb"><div class="rtit">${race.name}<span class="rdist">${race.dist}</span></div><div class="rtime">${race.time}</div></div>
-      ${bdg}<div class="rchev">⌄</div></div>
-    <div class="rbody">
-      <table class="lt"><thead><tr><th>Lane</th><th>College</th><th>Result</th></tr></thead>
-      <tbody>${rows}</tbody></table>
-    </div>`;
-    box.appendChild(div);
-  });
-}
-
-function tog(id){
-  const c=document.getElementById(`rc${id}`);if(!c)return;
-  const was=c.classList.contains('exp');
-  document.querySelectorAll('.rc.exp').forEach(x=>x.classList.remove('exp'));
-  if(!was)c.classList.add('exp');
-}
-
-function filt(type,el){
-  document.querySelectorAll('.fc').forEach(x=>x.classList.remove('on'));el.classList.add('on');
-  document.querySelectorAll('.rc').forEach(card=>{
-    const g=card.dataset.g,t=card.dataset.t;
-    card.style.display=(type==='all'||type===g||type===t)?'':'none';
-  });
-}
-
-// ══════════════════════════════════════════
-// SCORES
-// ══════════════════════════════════════════
-// Points table: keyed by [gender][raceType][place]
-// Race types: 'eight', '1stfour', '2ndfour', '3rdfour', '4thfour', '5thfour'
-// Women's has a 9th place row
+// ══ POINTS ══
 const POINTS_TABLE={
   mens:{
     eight:    {1:28,2:26,3:24,4:22,5:20,6:18,7:16,8:14},
@@ -585,7 +368,6 @@ const POINTS_TABLE={
   }
 };
 
-// Map a race to its scoring category
 function getRaceCategory(race){
   const g=race.g==='womens'?'womens':'mens';
   let type='5thfour';
@@ -598,58 +380,204 @@ function getRaceCategory(race){
   else if(n.includes('5th')||n.includes('6th')||n.includes('social'))type='5thfour';
   return{g,type};
 }
-
 function getRacePoints(race,place){
-  const {g,type}=getRaceCategory(race);
+  const{g,type}=getRaceCategory(race);
   return(POINTS_TABLE[g]?.[type]?.[place])||0;
 }
 
-function calcPtsForGender(gender){
-  const pts={};Object.keys(CL).forEach(k=>pts[k]=0);
-  const gRaces=RACES.filter(r=>r.g===gender);
-  gRaces.forEach(race=>{
-    const res=RES[race.id];if(!res?.placements)return;
-    res.placements.forEach(p=>{
-      if(pts[p.college]!==undefined)pts[p.college]+=getRacePoints(race,p.place);
-    });
-  });
-  // Only include colleges that compete in this gender
-  return Object.entries(pts)
-    .filter(([k])=>gRaces.some(r=>r.lanes.includes(k)))
-    .sort((a,b)=>b[1]-a[1]);
+// ══ ADMIN TOKEN ══
+const ADMIN_TOKEN='icc2026admin';
+const isAdmin=(new URLSearchParams(window.location.search).get('admin')===ADMIN_TOKEN);
+
+// ══ SUPABASE ══
+const SB_URL_DEFAULT='https://zsvuthudnhcwmdsxwzgf.supabase.co';
+const SB_KEY_DEFAULT='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpzdnV0aHVkbmhjd21kc3h3emdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxNzg0OTUsImV4cCI6MjA5NDc1NDQ5NX0.PYr7h9Lgj_vTgTGow7mgZIyqdhcghcJgIbbkm57_Qok';
+
+let RACES=[],RES={},CREWS={},curR=null,isLive=false,editingCrewKey=null,pollInterval=null;
+let SB_URL=SB_URL_DEFAULT,SB_KEY=SB_KEY_DEFAULT;
+
+const RACE_DATA_VERSION='2026v3';
+
+function loadState(){
+  try{
+    // If race data version changed, reset to defaults
+    const rdv=localStorage.getItem('rg_race_version');
+    if(rdv!==RACE_DATA_VERSION){
+      localStorage.removeItem('rg_races');
+      localStorage.setItem('rg_race_version',RACE_DATA_VERSION);
+    }
+    const r=localStorage.getItem('rg_races');
+    RACES=r?JSON.parse(r):JSON.parse(JSON.stringify(DEFAULT_RACES));
+    RES=JSON.parse(localStorage.getItem('rg_results')||'{}');
+    CREWS=JSON.parse(localStorage.getItem('rg_crews')||'{}');
+    const cur=localStorage.getItem('rg_cur');
+    if(cur){curR=parseInt(cur);isLive=true;}
+    SB_URL=localStorage.getItem('rg_sb_url')||SB_URL_DEFAULT;
+    SB_KEY=localStorage.getItem('rg_sb_key')||SB_KEY_DEFAULT;
+  }catch(e){RACES=JSON.parse(JSON.stringify(DEFAULT_RACES));}
+}
+function saveLocal(){
+  localStorage.setItem('rg_races',JSON.stringify(RACES));
+  localStorage.setItem('rg_results',JSON.stringify(RES));
+  localStorage.setItem('rg_crews',JSON.stringify(CREWS));
+  if(curR)localStorage.setItem('rg_cur',curR);
+  else localStorage.removeItem('rg_cur');
 }
 
-function calcPts(){
-  // Combined — used by colleges tab
-  const pts={};Object.keys(CL).forEach(k=>pts[k]=0);
+// ══ SUPABASE FUNCTIONS ══
+function saveSBConfig(){
+  SB_URL=document.getElementById('sb-url').value.trim()||SB_URL_DEFAULT;
+  SB_KEY=document.getElementById('sb-key').value.trim()||SB_KEY_DEFAULT;
+  localStorage.setItem('rg_sb_url',SB_URL);
+  localStorage.setItem('rg_sb_key',SB_KEY);
+  updateSBStatus();startPolling();
+}
+function updateSBStatus(){
+  const el=document.getElementById('sb-status');if(!el)return;
+  el.textContent=(SB_URL&&SB_KEY)?'✓ connected':'(not configured)';
+  el.style.color=(SB_URL&&SB_KEY)?'#16a34a':'var(--muted)';
+}
+async function sbFetch(path,method='GET',body=null){
+  if(!SB_URL||!SB_KEY)return null;
+  try{
+    const opts={method,headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'}};
+    if(body)opts.body=JSON.stringify(body);
+    const r=await fetch(SB_URL+'/rest/v1/'+path,opts);
+    if(!r.ok){console.warn('SB',r.status);return null;}
+    const txt=await r.text();return txt?JSON.parse(txt):[];
+  }catch(e){return null;}
+}
+async function pushResultsToSB(){
+  if(!SB_URL||!SB_KEY)return;
+  const rows=Object.entries(RES).map(([id,v])=>({race_id:parseInt(id),data:JSON.stringify(v),current_race:curR===parseInt(id)}));
+  if(rows.length)await sbFetch('regatta_results?on_conflict=race_id','POST',rows);
+  if(curR&&!rows.find(r=>r.race_id===curR))
+    await sbFetch('regatta_results?on_conflict=race_id','POST',[{race_id:curR,data:'{}',current_race:true}]);
+}
+async function pullResultsFromSB(){
+  if(!SB_URL||!SB_KEY)return;
+  const data=await sbFetch('regatta_results?select=*');
+  if(!data||!Array.isArray(data)||!data.length)return;
+  let changed=false,newCur=null;
+  data.forEach(row=>{
+    try{
+      const d=JSON.parse(row.data||'{}');const k=row.race_id.toString();
+      if(Array.isArray(d.placements)&&d.placements.length>0&&JSON.stringify(RES[k])!==JSON.stringify(d)){RES[k]=d;changed=true;}
+      if(row.current_race)newCur=row.race_id;
+    }catch(e){}
+  });
+  if(newCur&&newCur!==curR){curR=newCur;isLive=true;changed=true;}
+  if(changed){saveLocal();renderRaces();updateLiveBar();}
+}
+function startPolling(){
+  if(pollInterval)clearInterval(pollInterval);
+  if(SB_URL&&SB_KEY){pullResultsFromSB();pollInterval=setInterval(pullResultsFromSB,5000);}
+}
+
+// ══ HELPERS ══
+const FOUR_POSITIONS=['Cox','Stroke','3','2','Bow'];
+const EIGHT_POSITIONS=['Cox','Stroke','7','6','5','4','3','2','Bow'];
+
+function collegeLogo(k,size=14){
+  const c=CL[k];if(!c||!c.svg)return'';
+  return`<span style="width:${size}px;height:${size}px;display:inline-block;vertical-align:middle">${c.svg}</span>`;
+}
+function pill(k,lbl){
+  if(!k)return'<span class="cpill empty">—</span>';
+  const c=CL[k]||{};
+  return`<span class="cpill ${c.cls||''}">${collegeLogo(k,14)} ${lbl||c.name||k}</span>`;
+}
+function activeLanes(race){
+  return race.lanes.map((c,i)=>{
+    const rawLbl=(race.lbls&&race.lbls[i]);
+    const lbl=rawLbl||(c?(CL[c]?.name||c):null);
+    return{lane:i+1,c,lbl};
+  }).filter(x=>x.c);
+}
+function getPositions(race){return race.t==='eights'?EIGHT_POSITIONS:FOUR_POSITIONS;}
+
+// ══ RENDER RACES ══
+function renderRaces(){
+  const box=document.getElementById('races');box.innerHTML='';
+  document.getElementById('cnt-races').textContent=RACES.length;
+  document.getElementById('cnt-done').textContent=Object.keys(RES).filter(k=>Array.isArray(RES[k]?.placements)&&RES[k].placements.length>0).length;
   RACES.forEach(race=>{
-    const res=RES[race.id];if(!res?.placements)return;
-    res.placements.forEach(p=>{
-      if(pts[p.college]!==undefined)pts[p.college]+=getRacePoints(race,p.place);
+    const res=RES[race.id]||{};
+    const isDone=Array.isArray(res.placements)&&res.placements.length>0;
+    const isCur=curR===race.id;
+    const div=document.createElement('div');
+    div.className=`rc${isCur?' cur':''}${isDone?' done':''}`;
+    div.dataset.g=race.g;div.dataset.t=race.t;div.id=`rc${race.id}`;
+    const bdg=race.invitational
+      ? `<span class="rbdg" style="background:rgba(107,114,128,.12);color:var(--muted)">Invitational</span>`
+      : isDone?`<span class="rbdg bdn">✓ Done</span>`:isCur?`<span class="rbdg bcur">▶ Racing</span>`:`<span class="rbdg bup">Upcoming</span>`;
+    const al=activeLanes(race);
+    let rows='';
+    al.forEach(({lane,c,lbl})=>{
+      const p=res.placements?.find(x=>x.lane===lane);
+      const tm=res.times?.[lane]||'';
+      rows+=`<tr><td class="lnum">${lane}</td><td>${pill(c,lbl)}</td>
+        <td>${p?`<span class="plc ${p.place<=3?'p'+p.place:'px'}">${p.place}</span>`:''} ${tm?`<span style="font-size:11px;color:var(--muted)">${tm}</span>`:''}</td></tr>`;
     });
+    div.innerHTML=`<div class="rh" onclick="tog(${race.id})">
+      <div class="rnum">${race.id}</div>
+      <div class="rtb"><div class="rtit">${race.name}<span class="rdist">${race.dist}</span></div><div class="rtime">${race.time}</div></div>
+      ${bdg}<div class="rchev">⌄</div></div>
+    <div class="rbody"><table class="lt"><thead><tr><th>Lane</th><th>College</th><th>Result</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    box.appendChild(div);
+  });
+}
+function tog(id){
+  const c=document.getElementById(`rc${id}`);if(!c)return;
+  const was=c.classList.contains('exp');
+  document.querySelectorAll('.rc.exp').forEach(x=>x.classList.remove('exp'));
+  if(!was)c.classList.add('exp');
+}
+function filt(type,el){
+  document.querySelectorAll('.fc').forEach(x=>x.classList.remove('on'));el.classList.add('on');
+  document.querySelectorAll('.rc').forEach(card=>{
+    const g=card.dataset.g,t=card.dataset.t;
+    card.style.display=(type==='all'||type===g||type===t)?'':'none';
+  });
+}
+
+// ══ SCORES ══
+function calcPtsForGender(gender){
+  const pts={};Object.keys(CL).forEach(k=>pts[k]=0);
+  const gRaces=RACES.filter(r=>r.g===gender&&!r.invitational);
+  gRaces.forEach(race=>{
+    const res=RES[race.id];if(!res?.placements)return;
+    res.placements.forEach(p=>{if(pts[p.college]!==undefined)pts[p.college]+=getRacePoints(race,p.place);});
+  });
+  return Object.entries(pts).filter(([k])=>gRaces.some(r=>r.lanes.includes(k))).sort((a,b)=>b[1]-a[1]);
+}
+function calcPts(){
+  const pts={};Object.keys(CL).forEach(k=>pts[k]=0);
+  RACES.filter(r=>!r.invitational).forEach(race=>{
+    const res=RES[race.id];if(!res?.placements)return;
+    res.placements.forEach(p=>{if(pts[p.college]!==undefined)pts[p.college]+=getRacePoints(race,p.place);});
   });
   return Object.entries(pts).filter(([k])=>RACES.some(r=>r.lanes.includes(k))).sort((a,b)=>b[1]-a[1]);
 }
-
-function renderLeaderboard(containerId, sorted){
+function renderLeaderboard(cid,sorted){
   const rks=['rk1','rk2','rk3'];
-  document.getElementById(containerId).innerHTML=sorted.length
-    ? sorted.map(([k,pts],i)=>{
+  document.getElementById(cid).innerHTML=sorted.length
+    ?sorted.map(([k,pts],i)=>{
         const c=CL[k];const rk=rks[i]||'rko';
         return`<div class="lbc${i===0?' r1':''}">
           <div class="rkcir ${rk}">${i+1}</div>
-          <div><div class="scn">${c.name}</div><div class="scp">${pts}</div><div class="scs">points</div></div>
-        </div>`;
+          <div style="display:flex;align-items:center;gap:8px;flex:1">
+            <div style="width:28px;height:28px">${c.svg||''}</div>
+            <div><div class="scn">${c.name}</div><div class="scp">${pts}</div><div class="scs">points</div></div>
+          </div></div>`;
       }).join('')
-    : `<div style="color:var(--muted);font-size:13px;padding:8px 0">No results yet.</div>`;
+    :`<div style="color:var(--muted);font-size:13px;padding:8px 0">No results yet.</div>`;
 }
-
-function renderPointsTable(containerId, gender){
-  const gRaces=RACES.filter(r=>r.g===gender);
+function renderPointsTable(cid,gender){
+  const gRaces=RACES.filter(r=>r.g===gender&&!r.invitational);
   const sorted=calcPtsForGender(gender);
-  const noResults=!gRaces.some(r=>RES[r.id]?.placements?.length);
-  if(noResults){
-    document.getElementById(containerId).innerHTML=`<div style="text-align:center;color:var(--muted);padding:16px;font-size:13px">No results yet.</div>`;return;
+  if(!gRaces.some(r=>RES[r.id]?.placements?.length)){
+    document.getElementById(cid).innerHTML=`<div style="text-align:center;color:var(--muted);padding:16px;font-size:13px">No results yet.</div>`;return;
   }
   const cols=sorted.map(([k])=>k);
   let h=`<div style="overflow-x:auto"><table class="lt"><thead><tr><th>Race</th>${cols.map(k=>`<th style="min-width:54px">${CL[k]?.short}</th>`).join('')}</tr></thead><tbody>`;
@@ -667,19 +595,16 @@ function renderPointsTable(containerId, gender){
   h+=`<tr style="border-top:2px solid var(--navy)"><td style="font-weight:600;font-size:12px;color:var(--navy)">Total</td>`;
   cols.forEach(k=>{const v=sorted.find(([kk])=>kk===k)?.[1]||0;h+=`<td style="text-align:center;font-weight:700;font-size:14px;color:var(--navy)">${v}</td>`;});
   h+=`</tr></tbody></table></div>`;
-  document.getElementById(containerId).innerHTML=h;
+  document.getElementById(cid).innerHTML=h;
 }
-
 function renderScores(){
-  renderLeaderboard('lbgrid-mens', calcPtsForGender('mens'));
-  renderLeaderboard('lbgrid-womens', calcPtsForGender('womens'));
+  renderLeaderboard('lbgrid-mens',calcPtsForGender('mens'));
+  renderLeaderboard('lbgrid-womens',calcPtsForGender('womens'));
   renderPointsTable('ptbl-mens','mens');
   renderPointsTable('ptbl-womens','womens');
 }
 
-// ══════════════════════════════════════════
-// COLLEGES
-// ══════════════════════════════════════════
+// ══ COLLEGES ══
 function renderColleges(){
   const pts=Object.fromEntries(calcPts());
   const active=Object.entries(CL).filter(([k])=>RACES.some(r=>r.lanes.includes(k)));
@@ -688,7 +613,7 @@ function renderColleges(){
     const p=pts[k]||0;
     return`<div class="ccard">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-        <div style="width:36px;height:36px;border-radius:50%;background:${c.color};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0">${c.short}</div>
+        <div style="width:40px;height:40px;flex-shrink:0">${c.svg||''}</div>
         <div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--navy)">${c.name}</div><div style="font-size:11px;color:var(--muted)">${rc} race${rc>1?'s':''}</div></div>
         <div style="text-align:right"><div style="font-size:20px;font-weight:600;color:var(--navy)">${p}</div><div style="font-size:10px;color:var(--muted)">pts</div></div>
       </div>
@@ -697,135 +622,139 @@ function renderColleges(){
   }).join('');
 }
 
-// ══════════════════════════════════════════
-// CREW LISTS — one card per college per race
-// ══════════════════════════════════════════
-function getPositions(race){
-  return race.t==='eights'?EIGHT_POSITIONS:FOUR_POSITIONS;
-}
-
+// ══ CREW LISTS (view only for public) ══
 function renderCrewLists(){
-  const grid=document.getElementById('crewgrid');
-  grid.innerHTML='';
-
+  const grid=document.getElementById('crewgrid');grid.innerHTML='';
+  const intro=document.getElementById('crew-intro');
+  if(intro)intro.style.display=isAdmin?'none':'block';
   RACES.forEach(race=>{
     const positions=getPositions(race);
     const al=activeLanes(race);
-    // Get unique colleges in this race (by key, deduplicated)
-    const seen=new Set();
-    const colleges=[];
+    const seen=new Set();const colleges=[];
     al.forEach(({c,lbl})=>{if(c&&!seen.has(c)){seen.add(c);colleges.push({c,lbl});}});
-
     colleges.forEach(({c,lbl})=>{
       const crewKey=`${race.id}_${c}`;
       const crew=CREWS[crewKey]||{};
       const collegeName=lbl||CL[c]?.name||c;
       const boat=crew.boat||'';
-
+      const hasData=positions.some(p=>crew[p]);
+      if(!isAdmin&&!hasData)return; // hide empty cards from public
+      const bgColor=CL[c]?.color||'#0d1b2e';
       let rows=positions.map(pos=>{
         const name=crew[pos]||'';
-        return`<div class="crew-row">
-          <div class="crew-pos">${pos}</div>
-          <div class="crew-name${name?'':' placeholder'}">${name||'TBC'}</div>
-        </div>`;
+        return`<div class="crew-row"><div class="crew-pos">${pos}</div>
+          <div class="crew-name${name?'':' placeholder'}">${name||'TBC'}</div></div>`;
       }).join('');
-
       const card=document.createElement('div');
       card.className='crew-card';
-      card.innerHTML=`<div class="crew-hdr">
-        <div>
-          <div class="crew-hdr-t">Race ${race.id} — ${collegeName}</div>
-          <div class="crew-hdr-sub">${race.name} · ${race.time}${boat?' · '+boat:''}</div>
-        </div>
-        <button class="crew-edit-btn" onclick="openCrewEdit(${race.id},'${c}')">Edit crew</button>
+      card.innerHTML=`<div class="crew-hdr" style="background:${bgColor}">
+        <div><div class="crew-hdr-t">Race ${race.id} — ${collegeName}</div>
+        <div class="crew-hdr-sub">${race.name} · ${race.time}${boat?' · '+boat:''}</div></div>
+        ${isAdmin?`<button class="crew-edit-btn" onclick="openCrewAdmin(${race.id},'${c}')">Edit</button>`:''}
       </div>
-      <div class="crew-body">${rows}
-        ${boat?`<div style="margin-top:6px"><span class="boat-tag">Boat: ${boat}</span></div>`:''}
-      </div>`;
+      <div class="crew-body">${rows}${boat?`<div style="margin-top:6px"><span class="boat-tag">Boat: ${boat}</span></div>`:''}</div>`;
       grid.appendChild(card);
     });
   });
+  if(!grid.children.length&&!isAdmin){
+    grid.innerHTML=`<div style="color:var(--muted);font-size:13px;text-align:center;padding:30px">Crew lists will appear here once published by the admin.</div>`;
+  }
 }
 
-function openCrewEdit(raceId, collegeKey){
-  const race=RACES.find(r=>r.id===raceId);if(!race)return;
-  editingCrewId={raceId, collegeKey};
-  const crewKey=`${raceId}_${collegeKey}`;
-  const crew=CREWS[crewKey]||{};
+// ══ CREW ADMIN (inside admin modal) ══
+function populateCrewSelect(){
+  const sel=document.getElementById('crewsel');
+  sel.innerHTML='<option value="">— pick a race/college —</option>';
+  RACES.forEach(race=>{
+    const al=activeLanes(race);
+    const seen=new Set();
+    al.forEach(({c,lbl})=>{
+      if(c&&!seen.has(c)){seen.add(c);
+        const opt=document.createElement('option');
+        opt.value=`${race.id}_${c}`;
+        opt.textContent=`Race ${race.id} — ${lbl||CL[c]?.name||c} (${race.name})`;
+        sel.appendChild(opt);
+      }
+    });
+  });
+}
+function loadCrewAdmin(){
+  const val=document.getElementById('crewsel').value;
+  if(!val){document.getElementById('crewadminform').innerHTML='';document.getElementById('crewacts').style.display='none';return;}
+  const[raceId,colKey]=val.split('_');
+  const race=RACES.find(r=>r.id===parseInt(raceId));if(!race)return;
+  const crew=CREWS[val]||{};
   const positions=getPositions(race);
-  const collegeName=CL[collegeKey]?.name||collegeKey;
-  document.getElementById('crewModalTitle').textContent=`Race ${race.id} — ${collegeName}`;
-  document.getElementById('crewModalSub').textContent=`${race.name} · ${race.time}`;
-  document.getElementById('crew-boat').value=crew.boat||'';
-  let html='';
+  editingCrewKey=val;
+  let h=`<div style="background:var(--cream);border-radius:8px;padding:12px;margin-top:10px">
+    <div class="mrow"><label>Boat name</label><input class="dinput" id="ca-boat" placeholder="e.g. Vespoli 663" value="${crew.boat||''}"></div>
+    <div style="height:1px;background:var(--border);margin:10px 0"></div>`;
   positions.forEach(pos=>{
-    html+=`<div class="mrow" style="margin-bottom:8px">
-      <label style="font-size:12px;font-weight:600;color:var(--navy);width:70px">${pos}</label>
-      <input class="dinput" id="cf-${pos.replace(/\s/g,'_')}" placeholder="Name" value="${crew[pos]||''}">
+    h+=`<div class="mrow" style="margin-bottom:6px">
+      <label style="width:70px;font-size:12px;font-weight:600">${pos}</label>
+      <input class="dinput" id="ca-${pos.replace(/\s/g,'_')}" placeholder="Name" value="${crew[pos]||''}">
     </div>`;
   });
-  document.getElementById('crewfields').innerHTML=html;
-  document.getElementById('crewModal').classList.add('open');
+  h+=`</div>`;
+  document.getElementById('crewadminform').innerHTML=h;
+  document.getElementById('crewacts').style.display='flex';
 }
-
-function saveCrew(){
-  const {raceId,collegeKey}=editingCrewId||{};
-  const race=RACES.find(r=>r.id===raceId);if(!race)return;
+function saveCrewAdmin(){
+  if(!editingCrewKey)return;
+  const[raceId,colKey]=editingCrewKey.split('_');
+  const race=RACES.find(r=>r.id===parseInt(raceId));if(!race)return;
   const positions=getPositions(race);
-  const crewKey=`${raceId}_${collegeKey}`;
-  const crew={boat:document.getElementById('crew-boat').value};
+  const crew={boat:document.getElementById('ca-boat')?.value||''};
   positions.forEach(pos=>{
-    const el=document.getElementById(`cf-${pos.replace(/\s/g,'_')}`);
+    const el=document.getElementById(`ca-${pos.replace(/\s/g,'_')}`);
     if(el)crew[pos]=el.value;
   });
-  CREWS[crewKey]=crew;
-  saveLocal();
-  closeModal('crewModal');
-  renderCrewLists();
+  CREWS[editingCrewKey]=crew;
+  saveLocal();renderCrewLists();
   toast('Crew saved');
 }
+function openCrewAdmin(raceId,colKey){
+  const val=`${raceId}_${colKey}`;
+  openAdmin();
+  adminTab('crew-admin',null);
+  setTimeout(()=>{
+    populateCrewSelect();
+    document.getElementById('crewsel').value=val;
+    loadCrewAdmin();
+  },100);
+}
 
-// ══════════════════════════════════════════
-// ADMIN — RESULTS
-// ══════════════════════════════════════════
+// ══ ADMIN ══
 function openAdmin(){
-  // populate race select
   const sel=document.getElementById('arsel');
   sel.innerHTML='<option value="">— pick a race —</option>'+RACES.map(r=>`<option value="${r.id}">${r.id}. ${r.name} (${r.time})</option>`).join('');
-  // populate settings fields from saved values
-  try{
-    const s=localStorage.getItem('rg_settings');
-    const saved=s?JSON.parse(s):{};
-    document.getElementById('set-title').value=saved.title||document.querySelector('.htop h1')?.innerText||'';
-    document.getElementById('set-sub').value=saved.sub||document.getElementById('regattatitle')?.textContent||'';
-    document.getElementById('set-venue').value=saved.venue||document.getElementById('inf-venue')?.textContent||'';
-    document.getElementById('set-date').value=saved.date||document.getElementById('inf-date')?.textContent||'';
+  try{const s=localStorage.getItem('rg_settings');const saved=s?JSON.parse(s):{};
+    document.getElementById('set-title').value=saved.title||'';
+    document.getElementById('set-sub').value=saved.sub||'';
+    document.getElementById('set-venue').value=saved.venue||'';
+    document.getElementById('set-date').value=saved.date||'';
   }catch(e){}
-  // supabase
   document.getElementById('sb-url').value=SB_URL;
   document.getElementById('sb-key').value=SB_KEY;
   updateSBStatus();
+  populateCrewSelect();
   document.getElementById('adminModal').classList.add('open');
   populateDrawEditor();
 }
-
 function loadAdminRace(){
   const id=parseInt(document.getElementById('arsel').value);
   if(!id){document.getElementById('arform').innerHTML='';document.getElementById('aacts').style.display='none';return;}
-  const race=RACES.find(r=>r.id===id);
-  const res=RES[id]||{};
+  const race=RACES.find(r=>r.id===id);const res=RES[id]||{};
   const al=activeLanes(race);
   let h=`<div style="background:var(--cream);border-radius:8px;padding:11px;margin-top:10px">
     <div class="ares-grid hdr"><div>Lane</div><div>College</div><div>Place</div><div>Time</div></div>`;
   al.forEach(({lane,c,lbl})=>{
-    const p=res.placements?.find(x=>x.lane===lane);
-    const tm=res.times?.[lane]||'';
+    const p=res.placements?.find(x=>x.lane===lane);const tm=res.times?.[lane]||'';
     h+=`<div class="ares-grid">
-      <div style="font-weight:700;color:var(--navy)">${lane}</div>
-      <div>${pill(c,lbl)}</div>
+      <div style="font-weight:700;color:var(--navy)">${lane}</div><div>${pill(c,lbl)}</div>
       <div><select class="psel" id="ap-${id}-${lane}">
         <option value="">—</option>
-        ${[1,2,3,4,5,6,7,8].map(n=>`<option value="${n}" ${p?.place==n?'selected':''}>${n}${['st','nd','rd','th','th','th','th','th'][n-1]}</option>`).join('')}
+        ${[1,2,3,4,5,6,7,8,9].map(n=>`<option value="${n}" ${p?.place==n?'selected':''}>${n}${['st','nd','rd','th','th','th','th','th','th'][n-1]}</option>`).join('')}
       </select></div>
       <div><input class="tfield" id="at-${id}-${lane}" placeholder="3:42.5" value="${tm}"></div>
     </div>`;
@@ -834,19 +763,13 @@ function loadAdminRace(){
   document.getElementById('arform').innerHTML=h;
   document.getElementById('aacts').style.display='flex';
 }
-
 function markCur(){
   const id=parseInt(document.getElementById('arsel').value);if(!id)return;
-  curR=id;isLive=true;
-  updateLiveBar();renderRaces();saveLocal();
-  toast(`Race ${id} marked as current`);
-  pushResultsToSB();
+  curR=id;isLive=true;updateLiveBar();renderRaces();saveLocal();toast(`Race ${id} marked as current`);pushResultsToSB();
 }
-
 function saveRes(){
   const id=parseInt(document.getElementById('arsel').value);if(!id)return;
-  const race=RACES.find(r=>r.id===id);
-  const al=activeLanes(race);
+  const race=RACES.find(r=>r.id===id);const al=activeLanes(race);
   const pls=[];const tms={};
   al.forEach(({lane,c})=>{
     const pv=document.getElementById(`ap-${id}-${lane}`)?.value;
@@ -855,180 +778,115 @@ function saveRes(){
     if(tv)tms[lane]=tv;
   });
   RES[id]={placements:pls,times:tms};
-  isLive=true;updateLiveBar();renderRaces();saveLocal();
-  toast(`Results saved for Race ${id}`);
-  pushResultsToSB();
+  isLive=true;updateLiveBar();renderRaces();saveLocal();toast(`Results saved for Race ${id}`);pushResultsToSB();
 }
-
 async function clearRes(){
   const id=parseInt(document.getElementById('arsel').value);if(!id)return;
-  delete RES[id];
-  if(curR===id){curR=null;}
-  // Delete from Supabase with correct headers
+  delete RES[id];if(curR===id)curR=null;
   if(SB_URL&&SB_KEY){
-    try{
-      await fetch(`${SB_URL}/rest/v1/regatta_results?race_id=eq.${id}`,{
-        method:'DELETE',
-        headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'}
-      });
-    }catch(e){console.warn('SB delete error',e);}
+    try{await fetch(`${SB_URL}/rest/v1/regatta_results?race_id=eq.${id}`,{method:'DELETE',
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'}});}
+    catch(e){}
   }
-  renderRaces();updateLiveBar();saveLocal();loadAdminRace();
-  toast(`Cleared Race ${id}`);
+  renderRaces();updateLiveBar();saveLocal();loadAdminRace();toast(`Cleared Race ${id}`);
 }
 
-// ══════════════════════════════════════════
-// ADMIN — DRAW EDITOR
-// ══════════════════════════════════════════
+// ══ DRAW EDITOR ══
 function populateDrawEditor(){
   const box=document.getElementById('draweditor');
-  const collegeOptions='<option value="">— empty —</option>'+Object.entries(CL).map(([k,v])=>`<option value="${k}">${v.name}</option>`).join('');
+  const copts='<option value="">— empty —</option>'+Object.entries(CL).map(([k,v])=>`<option value="${k}">${v.name}</option>`).join('');
   box.innerHTML=RACES.map(race=>`
-    <div class="draw-race" id="de-${race.id}">
+    <div class="draw-race">
       <div class="draw-race-hdr">
         <strong>Race ${race.id}</strong>
-        <input class="dinput" style="width:160px" id="de-name-${race.id}" value="${race.name}" placeholder="Race name">
-        <input class="dinput" style="width:80px" id="de-time-${race.id}" value="${race.time}" placeholder="Time">
-        <input class="dinput" style="width:70px" id="de-dist-${race.id}" value="${race.dist}" placeholder="Dist">
+        <input class="dinput" style="width:160px" id="de-name-${race.id}" value="${race.name}">
+        <input class="dinput" style="width:80px" id="de-time-${race.id}" value="${race.time}">
+        <input class="dinput" style="width:70px" id="de-dist-${race.id}" value="${race.dist}">
         <select class="dinput" style="width:80px" id="de-g-${race.id}">
           <option value="womens" ${race.g==='womens'?'selected':''}>Women's</option>
           <option value="mens" ${race.g==='mens'?'selected':''}>Men's</option>
-          <option value="mixed" ${race.g==='mixed'?'selected':''}>Mixed</option>
         </select>
       </div>
-      ${race.lanes.map((c,i)=>`
-        <div class="draw-lane-row">
-          <span>Lane ${i+1}</span>
-          <select class="dinput" id="de-lane-${race.id}-${i}">${collegeOptions.replace(`value="${c||''}"`,`value="${c||''}" selected`)}</select>
-          <input class="dinput" id="de-lbl-${race.id}-${i}" placeholder="Custom label (opt)" value="${(race.lbls&&race.lbls[i])||''}">
-        </div>`).join('')}
-      <div class="draw-lane-row" style="margin-top:6px">
-        <span style="color:var(--navy);font-weight:600">Note</span>
-        <textarea class="dinput" id="de-note-${race.id}" style="grid-column:2/4">${race.note||''}</textarea>
-      </div>
+      ${race.lanes.map((c,i)=>`<div class="draw-lane-row">
+        <span>Lane ${i+1}</span>
+        <select class="dinput" id="de-lane-${race.id}-${i}">${copts.replace(`value="${c||''}"`,`value="${c||''}" selected`)}</select>
+        <input class="dinput" id="de-lbl-${race.id}-${i}" placeholder="Custom label" value="${(race.lbls&&race.lbls[i])||''}">
+      </div>`).join('')}
     </div>`).join('');
 }
-
 function saveDrawChanges(){
   RACES.forEach(race=>{
     race.name=document.getElementById(`de-name-${race.id}`)?.value||race.name;
     race.time=document.getElementById(`de-time-${race.id}`)?.value||race.time;
     race.dist=document.getElementById(`de-dist-${race.id}`)?.value||race.dist;
     race.g=document.getElementById(`de-g-${race.id}`)?.value||race.g;
-    race.note=document.getElementById(`de-note-${race.id}`)?.value||race.note;
-    race.lanes=race.lanes.map((_,i)=>{
-      const v=document.getElementById(`de-lane-${race.id}-${i}`)?.value;
-      return v||null;
-    });
+    race.lanes=race.lanes.map((_,i)=>document.getElementById(`de-lane-${race.id}-${i}`)?.value||null);
     race.lbls=race.lanes.map((_,i)=>document.getElementById(`de-lbl-${race.id}-${i}`)?.value||'');
   });
-  saveLocal();renderRaces();
-  toast('Draw updated and saved');
+  saveLocal();renderRaces();toast('Draw updated');
 }
-
 function resetDraw(){
-  if(!confirm('Reset the draw to the default 2026 schedule? This cannot be undone.'))return;
+  if(!confirm('Reset to default schedule?'))return;
   RACES=JSON.parse(JSON.stringify(DEFAULT_RACES));
-  saveLocal();renderRaces();populateDrawEditor();
-  toast('Draw reset to default');
+  saveLocal();renderRaces();populateDrawEditor();toast('Draw reset');
 }
 
-// ══════════════════════════════════════════
-// ADMIN — SETTINGS
-// ══════════════════════════════════════════
+// ══ SETTINGS ══
 function saveSettings(){
   const title=document.getElementById('set-title').value.trim();
   const sub=document.getElementById('set-sub').value.trim();
   const venue=document.getElementById('set-venue').value.trim();
   const date=document.getElementById('set-date').value.trim();
-  if(title){
-    const h1=document.querySelector('.htop h1');
-    const words=title.split(' ');
-    // Bold last word in gold
-    const last=words.pop();
-    h1.innerHTML=words.join(' ')+' <span>'+last+'</span>';
-  }
+  if(title){const words=title.split(' ');const last=words.pop();
+    document.querySelector('.htop-text h1').innerHTML=words.join(' ')+' <span>'+last+'</span>';}
   if(sub)document.getElementById('regattatitle').textContent=sub;
   if(venue)document.getElementById('inf-venue').textContent=venue;
   if(date)document.getElementById('inf-date').textContent=date;
   localStorage.setItem('rg_settings',JSON.stringify({title,sub,venue,date}));
   toast('Settings saved');
 }
-
 function applySettings(s){
-  if(!s)return;
-  const {title,sub,venue,date}=s;
-  if(title){
-    const h1=document.querySelector('.htop h1');
-    const words=title.split(' ');
-    const last=words.pop();
-    h1.innerHTML=words.join(' ')+' <span>'+last+'</span>';
-  }
+  if(!s)return;const{title,sub,venue,date}=s;
+  if(title){const words=title.split(' ');const last=words.pop();
+    document.querySelector('.htop-text h1').innerHTML=words.join(' ')+' <span>'+last+'</span>';}
   if(sub)document.getElementById('regattatitle').textContent=sub;
   if(venue)document.getElementById('inf-venue').textContent=venue;
   if(date)document.getElementById('inf-date').textContent=date;
 }
 
-// ══════════════════════════════════════════
-// PANELS & MODALS
-// ══════════════════════════════════════════
+// ══ PANELS ══
 function showP(id,el){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
-  document.getElementById(`panel-${id}`).classList.add('on');
-  el.classList.add('on');
+  document.getElementById(`panel-${id}`).classList.add('on');el.classList.add('on');
   if(id==='scores')renderScores();
   if(id==='colleges')renderColleges();
   if(id==='crew')renderCrewLists();
 }
-
 function adminTab(id,el){
-  ['results','draw','settings'].forEach(t=>{
-    document.getElementById(`atab-${t}`).style.display=t===id?'':'none';
-  });
-  document.querySelectorAll('.mhdr ~ .mbody .nb').forEach(b=>b.classList.remove('on'));
-  el.classList.add('on');el.style.color='var(--navy)';el.style.borderBottomColor='var(--navy)';
-  document.querySelectorAll('.mhdr ~ .mbody .nb').forEach(b=>{
-    if(b!==el){b.style.color='var(--muted)';b.style.borderBottomColor='transparent';}
-  });
+  ['results','draw','crew-admin','settings'].forEach(t=>document.getElementById(`atab-${t}`).style.display=t===id?'':'none');
+  document.querySelectorAll('.mhdr ~ .mbody .nb').forEach(b=>{b.classList.remove('on');b.style.color='var(--muted)';b.style.borderBottomColor='transparent';});
+  if(el){el.classList.add('on');el.style.color='var(--navy)';el.style.borderBottomColor='var(--navy)';}
   if(id==='draw')populateDrawEditor();
+  if(id==='crew-admin')populateCrewSelect();
 }
-
 function closeModal(id){document.getElementById(id).classList.remove('open');}
-
 function updateLiveBar(){
   document.getElementById('ldot').classList.toggle('live',isLive);
   document.getElementById('lstxt').textContent=isLive?'Live scoring active':'Not live';
   const lbl=document.getElementById('currlbl');
-  if(curR){
-    const race=RACES.find(r=>r.id===curR);
-    lbl.textContent=race?`▶ Race ${curR}: ${race.name}`:'';
-    lbl.style.display='block';
-  }else{lbl.style.display='none';}
+  if(curR){const race=RACES.find(r=>r.id===curR);lbl.textContent=race?`▶ Race ${curR}: ${race.name}`:'';lbl.style.display='block';}
+  else lbl.style.display='none';
 }
-
 function toast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2600);
 }
 
-// ══════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════
-loadState();
-renderRaces();
-updateLiveBar();
-startPolling();
-
-// Show admin button only if secret token in URL
+// ══ INIT ══
+loadState();renderRaces();updateLiveBar();startPolling();
 if(isAdmin)document.getElementById('adminBtn').style.display='';
-
-// Load saved settings on every page load
-try{
-  const s=localStorage.getItem('rg_settings');
-  if(s)applySettings(JSON.parse(s));
-}catch(e){}
+try{const s=localStorage.getItem('rg_settings');if(s)applySettings(JSON.parse(s));}catch(e){}
 </script>
 </body>
 </html>
