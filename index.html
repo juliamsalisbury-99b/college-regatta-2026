@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>2026 ICC Regatta</title>
 <script>
-const PAGE_VERSION='v18';
+const PAGE_VERSION='v19';
 const stored=sessionStorage.getItem('page_version');
 if(stored&&stored!==PAGE_VERSION){sessionStorage.setItem('page_version',PAGE_VERSION);window.location.reload(true);}
 else sessionStorage.setItem('page_version',PAGE_VERSION);
@@ -546,7 +546,7 @@ function startPolling(){
   if(SB_URL&&SB_KEY){
     pullResultsFromSB();
     pullCrewsFromSB();
-    pollInterval=setInterval(()=>{pullResultsFromSB();pullCrewsFromSB();},5000);
+    pollInterval=setInterval(()=>{pullResultsFromSB();pullCrewsFromSB();},15000);
   }
 }
 
