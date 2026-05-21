@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>2026 ICC Regatta</title>
 <script>
-const PAGE_VERSION='v16';
+const PAGE_VERSION='v17';
 const stored=sessionStorage.getItem('page_version');
 if(stored&&stored!==PAGE_VERSION){sessionStorage.setItem('page_version',PAGE_VERSION);window.location.reload(true);}
 else sessionStorage.setItem('page_version',PAGE_VERSION);
@@ -503,9 +503,50 @@ async function pullResultsFromSB(){
     if(changed){saveLocal();renderRaces();updateLiveBar();}
   }catch(e){console.warn('Pull error',e);}
 }
+async function pushCrewsToSB(){
+  if(!SB_URL||!SB_KEY)return;
+  const entries=Object.entries(CREWS);
+  if(!entries.length)return;
+  try{
+    // Store all crews as a single JSON row with key=0
+    await fetch(`${SB_URL}/rest/v1/regatta_crews?key_id=eq.0`,{
+      method:'DELETE',
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'}
+    });
+    await fetch(`${SB_URL}/rest/v1/regatta_crews`,{
+      method:'POST',
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+      body:JSON.stringify({key_id:0,data:JSON.stringify(CREWS)})
+    });
+  }catch(e){console.warn('Crew push error',e);}
+}
+
+async function pullCrewsFromSB(){
+  if(!SB_URL||!SB_KEY)return;
+  try{
+    const r=await fetch(`${SB_URL}/rest/v1/regatta_crews?select=*`,{
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'}
+    });
+    if(!r.ok)return;
+    const data=await r.json();
+    if(!Array.isArray(data)||!data.length)return;
+    const fresh=JSON.parse(data[0].data||'{}');
+    if(JSON.stringify(fresh)!==JSON.stringify(CREWS)){
+      CREWS=fresh;
+      saveLocal();
+      // Re-render crew tab if it's open
+      if(document.getElementById('panel-crew').classList.contains('on'))renderCrewLists();
+    }
+  }catch(e){console.warn('Crew pull error',e);}
+}
+
 function startPolling(){
   if(pollInterval)clearInterval(pollInterval);
-  if(SB_URL&&SB_KEY){pullResultsFromSB();pollInterval=setInterval(pullResultsFromSB,5000);}
+  if(SB_URL&&SB_KEY){
+    pullResultsFromSB();
+    pullCrewsFromSB();
+    pollInterval=setInterval(()=>{pullResultsFromSB();pullCrewsFromSB();},5000);
+  }
 }
 
 // ══ HELPERS ══
@@ -744,8 +785,10 @@ function saveCrewAdmin(){
     if(el)crew[pos]=el.value;
   });
   CREWS[editingCrewKey]=crew;
-  saveLocal();renderCrewLists();
-  toast('Crew saved');
+  saveLocal();
+  pushCrewsToSB();
+  renderCrewLists();
+  toast('✓ Crew saved and pushed live');
 }
 function openCrewAdmin(raceId,colKey){
   const val=`${raceId}_${colKey}`;
