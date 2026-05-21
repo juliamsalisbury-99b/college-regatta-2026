@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>2026 ICC Regatta</title>
 <script>
-const PAGE_VERSION='v15';
+const PAGE_VERSION='v16';
 const stored=sessionStorage.getItem('page_version');
 if(stored&&stored!==PAGE_VERSION){sessionStorage.setItem('page_version',PAGE_VERSION);window.location.reload(true);}
 else sessionStorage.setItem('page_version',PAGE_VERSION);
@@ -477,18 +477,31 @@ async function pushResultsToSB(){
 }
 async function pullResultsFromSB(){
   if(!SB_URL||!SB_KEY)return;
-  const data=await sbFetch('regatta_results?select=*');
-  if(!data||!Array.isArray(data)||!data.length)return;
-  let changed=false,newCur=null;
-  data.forEach(row=>{
-    try{
-      const d=JSON.parse(row.data||'{}');const k=row.race_id.toString();
-      if(Array.isArray(d.placements)&&d.placements.length>0&&JSON.stringify(RES[k])!==JSON.stringify(d)){RES[k]=d;changed=true;}
-      if(row.current_race)newCur=row.race_id;
-    }catch(e){}
-  });
-  if(newCur&&newCur!==curR){curR=newCur;isLive=true;changed=true;}
-  if(changed){saveLocal();renderRaces();updateLiveBar();}
+  try{
+    const r=await fetch(`${SB_URL}/rest/v1/regatta_results?select=*`,{
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'}
+    });
+    if(!r.ok){console.warn('Pull failed',r.status);return;}
+    const data=await r.json();
+    if(!Array.isArray(data))return;
+    let changed=false,newCur=null;
+    // Reset RES from Supabase as source of truth
+    const freshRES={};
+    data.forEach(row=>{
+      try{
+        const d=JSON.parse(row.data||'{}');
+        const k=row.race_id.toString();
+        if(Array.isArray(d.placements)&&d.placements.length>0){
+          freshRES[k]=d;
+        }
+        if(row.current_race)newCur=row.race_id;
+      }catch(e){}
+    });
+    // Check if anything changed
+    if(JSON.stringify(freshRES)!==JSON.stringify(RES)){RES=freshRES;changed=true;}
+    if(newCur!==curR){curR=newCur;isLive=newCur!==null;changed=true;}
+    if(changed){saveLocal();renderRaces();updateLiveBar();}
+  }catch(e){console.warn('Pull error',e);}
 }
 function startPolling(){
   if(pollInterval)clearInterval(pollInterval);
