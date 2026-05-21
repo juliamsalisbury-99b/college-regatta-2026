@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>2026 ICC Regatta</title>
 <script>
-const PAGE_VERSION='v14';
+const PAGE_VERSION='v15';
 const stored=sessionStorage.getItem('page_version');
 if(stored&&stored!==PAGE_VERSION){sessionStorage.setItem('page_version',PAGE_VERSION);window.location.reload(true);}
 else sessionStorage.setItem('page_version',PAGE_VERSION);
@@ -448,11 +448,32 @@ async function sbFetch(path,method='GET',body=null){
   }catch(e){return null;}
 }
 async function pushResultsToSB(){
-  if(!SB_URL||!SB_KEY)return;
-  const rows=Object.entries(RES).map(([id,v])=>({race_id:parseInt(id),data:JSON.stringify(v),current_race:curR===parseInt(id)}));
-  if(rows.length)await sbFetch('regatta_results?on_conflict=race_id','POST',rows);
-  if(curR&&!rows.find(r=>r.race_id===curR))
-    await sbFetch('regatta_results?on_conflict=race_id','POST',[{race_id:curR,data:'{}',current_race:true}]);
+  if(!SB_URL||!SB_KEY){toast('⚠️ Supabase not configured');return;}
+  const rows=Object.entries(RES).map(([id,v])=>({
+    race_id:parseInt(id),
+    data:JSON.stringify(v),
+    current_race:curR===parseInt(id)
+  }));
+  if(curR&&!rows.find(r=>r.race_id===curR)){
+    rows.push({race_id:curR,data:'{}',current_race:true});
+  }
+  let ok=true;
+  for(const row of rows){
+    try{
+      await fetch(`${SB_URL}/rest/v1/regatta_results?race_id=eq.${row.race_id}`,{
+        method:'DELETE',
+        headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'}
+      });
+      const res=await fetch(`${SB_URL}/rest/v1/regatta_results`,{
+        method:'POST',
+        headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+        body:JSON.stringify(row)
+      });
+      if(!res.ok){ok=false;console.warn('Push failed',res.status,await res.text());}
+    }catch(e){ok=false;console.warn('Push error',e);}
+  }
+  if(ok)toast('✓ Results pushed live to all devices');
+  else toast('⚠️ Push failed — check Supabase connection');
 }
 async function pullResultsFromSB(){
   if(!SB_URL||!SB_KEY)return;
