@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>2026 ICC Regatta</title>
 <script>
-const PAGE_VERSION='v17';
+const PAGE_VERSION='v18';
 const stored=sessionStorage.getItem('page_version');
 if(stored&&stored!==PAGE_VERSION){sessionStorage.setItem('page_version',PAGE_VERSION);window.location.reload(true);}
 else sessionStorage.setItem('page_version',PAGE_VERSION);
@@ -489,6 +489,7 @@ async function pullResultsFromSB(){
     const freshRES={};
     data.forEach(row=>{
       try{
+        if(row.race_id===999)return; // skip crew storage row
         const d=JSON.parse(row.data||'{}');
         const k=row.race_id.toString();
         if(Array.isArray(d.placements)&&d.placements.length>0){
@@ -505,36 +506,36 @@ async function pullResultsFromSB(){
 }
 async function pushCrewsToSB(){
   if(!SB_URL||!SB_KEY)return;
-  const entries=Object.entries(CREWS);
-  if(!entries.length)return;
   try{
-    // Store all crews as a single JSON row with key=0
-    await fetch(`${SB_URL}/rest/v1/regatta_crews?key_id=eq.0`,{
+    // Use race_id=999 as a special row to store all crew data
+    await fetch(`${SB_URL}/rest/v1/regatta_results?race_id=eq.999`,{
       method:'DELETE',
       headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'}
     });
-    await fetch(`${SB_URL}/rest/v1/regatta_crews`,{
+    const res=await fetch(`${SB_URL}/rest/v1/regatta_results`,{
       method:'POST',
       headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
-      body:JSON.stringify({key_id:0,data:JSON.stringify(CREWS)})
+      body:JSON.stringify({race_id:999,data:JSON.stringify({crews:CREWS}),current_race:false})
     });
+    if(res.ok)console.log('Crews pushed ok');
+    else console.warn('Crew push failed',res.status,await res.text());
   }catch(e){console.warn('Crew push error',e);}
 }
 
 async function pullCrewsFromSB(){
   if(!SB_URL||!SB_KEY)return;
   try{
-    const r=await fetch(`${SB_URL}/rest/v1/regatta_crews?select=*`,{
+    const r=await fetch(`${SB_URL}/rest/v1/regatta_results?race_id=eq.999&select=*`,{
       headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'}
     });
-    if(!r.ok)return;
+    if(!r.ok){console.warn('Crew pull failed',r.status);return;}
     const data=await r.json();
     if(!Array.isArray(data)||!data.length)return;
-    const fresh=JSON.parse(data[0].data||'{}');
+    const parsed=JSON.parse(data[0].data||'{}');
+    const fresh=parsed.crews||{};
     if(JSON.stringify(fresh)!==JSON.stringify(CREWS)){
       CREWS=fresh;
       saveLocal();
-      // Re-render crew tab if it's open
       if(document.getElementById('panel-crew').classList.contains('on'))renderCrewLists();
     }
   }catch(e){console.warn('Crew pull error',e);}
